@@ -7,8 +7,9 @@ TypeScript 语言实现的算法集。
 2. 全局安装 TypeScript: `npm i -g typescript`；
 3. 全局安装 ts-node: `npm i -g ts-node`；
 4. 下载本项目：`git clone https://github.com/linzier/algo-ts.git`；
-5. 进入项目根目录并安装依赖：`cd $proj_dir & npm i`；
-6. 运行相关算法的单元测试文件，如：`ts-node test/sort/insertsort.ts`；
+5. 进入项目根目录并安装依赖：`cd $proj_dir && npm i`；
+6. 运行某个算法的单元测试：`npm run test test/sort/insertsort.test.ts`；
+7. 或者运行所有的单元测试：`npm run test:all`；
 
 ### 开发指南：
 - src 目录：存放源码，里面根据算法类型归类分二级目录；
