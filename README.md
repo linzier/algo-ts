@@ -41,6 +41,7 @@ TypeScript 语言实现的算法集。
 - [希尔排序](./src/sort/shellsort.ts)
 - [堆排序](./src/sort/heapsort.ts)
 - [归并排序](./src/sort/mergesort.ts)
+- [逆序对](./src/sort/inversion-pair.ts)
 - [快速排序](./src/sort/quicksort.ts)
 - [基数排序](./src/sort/basesort.ts)
 - [桶排序](./src/sort/bucketsort.ts)
