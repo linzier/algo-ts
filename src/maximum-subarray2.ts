@@ -41,7 +41,7 @@ function maxSubarray(arr: number[]): MaxSubInfo {
     // dp[i] 表示 arr 中以 i 作为右边界的最大子数组信息
     const dp: MaxSubInfo[] = []
     // 记录 dp 中最大的那个子数组在 dp 中的位置（dp 求解完成后，该位置的值就是最终解）
-    let maxRightIndx = 0
+    let maxIndex = 0
 
     // 初始化第一个元素
     dp[0] = { start: 0, end: 0, sum: arr[0] }
@@ -60,12 +60,12 @@ function maxSubarray(arr: number[]): MaxSubInfo {
         }
 
         // 看 dp[i] 是否是目前为止最大的子数组
-        if (dp[i].sum > dp[maxRightIndx].sum) {
-            maxRightIndx = i
+        if (dp[i].sum > dp[maxIndex].sum) {
+            maxIndex = i
         }
     }
 
-    return dp[maxRightIndx]
+    return dp[maxIndex]
 }
 
 export { maxSubarray }
