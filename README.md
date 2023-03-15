@@ -34,6 +34,7 @@ TypeScript 语言实现的算法集。
 - [归并排序](./src/merge-sort.ts)
 
 ### 动态规划：
+- [最大子数组（O(n)复杂度解法）](./src/maximum-subarray2.ts)
 
 ### 贪心算法：
 
