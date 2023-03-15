@@ -1,5 +1,6 @@
 import assert from 'assert'
 import { maxSubarray, MaxSubInfo } from '../src/maximum-subarray1'
+import { maxSubarray as dpMaxSubarray } from '../src/maximum-subarray2'
 
 const data: [number[], MaxSubInfo][] = [
     [[], { start: -1, end: -1, sum: 0 }],
@@ -13,6 +14,15 @@ describe('max subarray:divide and conquer strategy', () => {
     it('should success for all array', () => {
         for (const [arr, info] of data) {
             const rst = maxSubarray(arr)
+            assert.ok(rst.start == info.start && rst.end == info.end && rst.sum == info.sum)
+        }
+    })
+})
+
+describe('max subarray:dynamic programming', () => {
+    it('should success for all array', () => {
+        for (const [arr, info] of data) {
+            const rst = dpMaxSubarray(arr)
             assert.ok(rst.start == info.start && rst.end == info.end && rst.sum == info.sum)
         }
     })

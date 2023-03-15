@@ -40,3 +40,4 @@ TypeScript 语言实现的算法集。
 ### 分治算法：
 - [归并排序](./src/merge-sort.ts)
 - [逆序对](./src/inversion-pair.ts)
+- [最大子数组（最大子序和）](./src/maximum-subarray1.ts)
