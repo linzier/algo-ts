@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { inversionPair } from '../../src/sort/inversion-pair'
+import { inversionPair } from '../src/inversion-pair'
 
 describe('inversion pair', () => {
     it('should success for all array', () => {

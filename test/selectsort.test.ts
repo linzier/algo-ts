@@ -1,5 +1,5 @@
 import { sort } from './sort-util'
-import { selectSort } from '../../src/sort/selectsort'
+import { selectSort } from '../src/select-sort'
 
 describe('select sort', () => {
     it('should success for all array', () => {
