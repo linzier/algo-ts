@@ -27,11 +27,13 @@ TypeScript 语言实现的算法集。
 ------
 
 ### 数据结构:
-  
+- [堆](./src/heap.ts)
+
 ### 排序：
 - [插入排序](./src/insert-sort.ts)
 - [选择排序](./src/select-sort.ts)
 - [归并排序](./src/merge-sort.ts)
+- [堆排序](./src/heap-sort.ts)
 
 ### 动态规划：
 - [最大子数组（O(n)复杂度解法）](./src/maximum-subarray2.ts)
