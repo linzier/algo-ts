@@ -11,7 +11,7 @@
     "test": "mocha --nolazy -r ts-node/register"
   },
   "keywords": [
-    "algorithm"
+    "algorithm", "TypeScript", "node.js"
   ],
   "author": "linzier",
   "license": "BSD",

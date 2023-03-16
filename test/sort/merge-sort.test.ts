@@ -1,5 +1,5 @@
 import { sort } from './sort-util'
-import { mergeSort } from '../src/merge-sort'
+import { mergeSort } from '../../src/sort/merge-sort'
 
 describe('merge sort', () => {
     it('should success for all array', () => {

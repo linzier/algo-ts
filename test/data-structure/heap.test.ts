@@ -1,5 +1,5 @@
 import assert from "assert"
-import { Heap } from '../src/heap'
+import { Heap } from '../../src/data-structure/heap'
 
 const arrs = [
     [],

@@ -1,5 +1,5 @@
 import { sort } from './sort-util'
-import { insertSort } from '../src/insert-sort'
+import { insertSort } from '../../src/sort/insert-sort'
 
 describe('insert sort', () => {
     it('should success for all array', () => {

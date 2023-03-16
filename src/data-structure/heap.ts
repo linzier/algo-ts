@@ -94,23 +94,25 @@ class Heap {
      * 先将元素加到堆尾，然后类似插入排序思想，顺着该元素的父节点递归向上找到适合它的位置插入即可。
      * （对于大顶堆，就是向上找到位置 i，data[i] < ele 且 PARENT(i) >= ele）
      * （一个节点，顺着其父节点递归向上是已经排好序的） 
+     * @returns 返回元素 ele 被插入到的节点位置
      */
-    public push(ele: number) {
+    public push(ele: number): number {
         // 将元素加到末尾
         this.data.push(ele)
         this._size += 1
 
         // 让末尾元素向上“冒泡”到合适的位置
-        this.bubble(this._size)
+        return this.bubble(this._size)
     }
 
     /**
      * 从 i 位置开始顺着父节点链“冒泡”，找到 data[i] 应插入的合适的位置
      * 思想同插入排序
+     * @returns 返回原 i 位置的元素 bubble 后所在的新位置 j
      */
-    protected bubble(i: number) {
+    protected bubble(i: number): number {
         if (i == 1) {
-            return
+            return 1
         }
 
         // 将 i 位置的元素暂存起来，避免每次都要执行三次赋值来交换数据
@@ -123,7 +125,7 @@ class Heap {
             if (this.isMax && this.data[parent] >= curr || !this.isMax && this.data[parent] <= curr) {
                 // 符合条件了，将 curr 赋值到该位置，结束
                 this.data[i] = curr
-                return
+                return i
             }
 
             // i 位置的元素不符合堆的条件，将 parent 的元素往下挪到 i 的位置，继续向上找
@@ -133,6 +135,7 @@ class Heap {
 
         // 如果走到这里（根），说明整个父节点链上元素都大于/小于（取决于是大顶堆还是小顶堆） i 元素，则将 i 元素设置为根
         this.data[1] = curr
+        return 1
     }
 
     /**
@@ -161,11 +164,12 @@ class Heap {
      *  3. 然而 j 和 i 交换后，j 位置的新值（从 i 位置交换来的）针对 TREE[j] 可能不再满足大顶堆的条件，所以需要继续 heapify(j)。
      * 
      * @param i - 子树根节点所在位置
+     * @returns 操作后原 i 元素所在的新位置 j
      */
-    protected heapify(i: number) {
+    protected heapify(i: number): number {
         // 终止条件：i 是叶子节点
         if (i > this._size >> 1) {
-            return
+            return i
         }
 
         // 取 data[i]、LEFT(i)、RIGHT(i) 三者最大/小值
@@ -176,7 +180,7 @@ class Heap {
 
         // 如果 i就是最大/最小值，则堆化结束
         if (peak === i) {
-            return
+            return i
         }
 
         // 需要交换
@@ -185,7 +189,7 @@ class Heap {
         this.data[i] = tmp
 
         // 交换后需要对 peak 构成的子树继续堆化
-        this.heapify(peak)
+        return this.heapify(peak)
     }
 
     /**

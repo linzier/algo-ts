@@ -1,4 +1,4 @@
-import { Heap } from './heap'
+import { Heap } from '../data-structure/heap'
 /**
  * 堆排序
  * 使用大顶堆实现升序排序（小顶堆实现降序排序）

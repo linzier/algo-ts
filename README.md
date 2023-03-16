@@ -12,35 +12,35 @@ TypeScript 语言实现的算法集。
 7. 或者运行所有的单元测试：`npm run test:all`；
 
 ### 开发指南：
-- src 目录：存放源码；
+- src 目录：存放源码，视情况划分二级目录；
 - test 目录：单元测试目录，目录结构同 src；
 - 为了让不太熟悉 TypeScript 的同学也能容易看懂算法实现代码，本项目在代码编写上尽量不使用复杂的语法（如大部分时候直接使用基本数据类型，而不是泛型），让大家在阅读代码时将注意力集中在算法实现本身，而不是语言特定语法中；
 - 注释：为便于阅读，代码尽可能包含详尽的注释。一般一个文件就是一个特定算法实现，在该文件顶部会包含一段注释，说明算法名称、说明、算法实现思路。另外大部分函数以及函数内部也都会包含详细的注释说明算法实现逻辑；
-- 目录：
-  - 每个算法都在下方目录中有对应索引，方便快速检阅；
-  - 一个算法可能属于多个目录，如归并算法同时属于“排序”和“分治算法”；
-  - 正因为如此，src 中并没有对各算法做进一步的目录划分；
+- 目录与索引：
+  - 每个算法都需要加入到下方索引中，方便检阅；
+  - 一个算法可能属于多个索引分类，如归并算法同时属于“排序”和“分治算法”；
+  - 一般情况下，src 下的目录和索引是对应的，不过对于可归入多个索引分类的算法，在 src 下放入到其中一个目录即可。另外一些不好划分目录的直接放在 src 一级目录下；
 
 **相关算法和数据结构持续更新中，欢迎参与。**
 
-目录
+索引
 ------
 
 ### 数据结构:
-- [堆](./src/heap.ts)
+- [堆](./src/data-structure/heap.ts)
 
 ### 排序：
-- [插入排序](./src/insert-sort.ts)
-- [选择排序](./src/select-sort.ts)
-- [归并排序](./src/merge-sort.ts)
-- [堆排序](./src/heap-sort.ts)
+- [插入排序](./src/sort/insert-sort.ts)
+- [选择排序](./src/sort/select-sort.ts)
+- [归并排序](./src/sort/merge-sort.ts)
+- [堆排序](./src/sort/heap-sort.ts)
 
 ### 动态规划：
-- [最大子数组（O(n)复杂度解法）](./src/maximum-subarray2.ts)
+- [最大子数组（O(n)复杂度解法）](./src/dp/maximum-subarray.ts)
 
 ### 贪心算法：
 
 ### 分治算法：
-- [归并排序](./src/merge-sort.ts)
-- [逆序对](./src/inversion-pair.ts)
-- [最大子数组（最大子序和）](./src/maximum-subarray1.ts)
+- [归并排序](./src/sort/merge-sort.ts)
+- [逆序对](./src/divide-and-conquer/inversion-pair.ts)
+- [最大子数组（最大子序和）](./src/divide-and-conquer/maximum-subarray.ts)

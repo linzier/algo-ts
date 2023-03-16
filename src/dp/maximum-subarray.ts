@@ -1,4 +1,4 @@
-import { MaxSubInfo } from './maximum-subarray1'
+import { MaxSubInfo } from '../divide-and-conquer/maximum-subarray'
 
 /**
  * 最大子数组（又称为最大子序和）
@@ -68,4 +68,4 @@ function maxSubarray(arr: number[]): MaxSubInfo {
     return dp[maxIndex]
 }
 
-export { maxSubarray }
+export { maxSubarray, MaxSubInfo }
