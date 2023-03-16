@@ -28,6 +28,7 @@ TypeScript 语言实现的算法集。
 
 ### 数据结构:
 - [堆](./src/data-structure/heap.ts)
+- [优先队列](./src/data-structure/priority-queue.ts)
 
 ### 排序：
 - [插入排序](./src/sort/insert-sort.ts)
@@ -35,6 +36,7 @@ TypeScript 语言实现的算法集。
 - [归并排序](./src/sort/merge-sort.ts)
 - [堆排序](./src/sort/heap-sort.ts)
 - [快速排序](./src/sort/quick-sort.ts)
+- [计数排序](./src/sort/count-sort.ts)
 
 ### 动态规划：
 - [最大子数组（O(n)复杂度解法）](./src/dp/maximum-subarray.ts)

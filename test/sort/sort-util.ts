@@ -3,7 +3,7 @@ import assert from "assert"
 /**
  * 生成待排序的数据
  */
-function numberData() {
+export function numberData(maxVal = Infinity) {
     const data = [
         [],
         [212],
@@ -20,6 +20,11 @@ function numberData() {
     }
 
     data.push(arr)
+
+    // 排除掉大于 maxVal 的
+    for (const i in data) {
+        data[i] = data[i].filter((val: number) => val <= maxVal)
+    }
 
     return data
 }
