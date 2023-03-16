@@ -34,6 +34,7 @@ TypeScript 语言实现的算法集。
 - [选择排序](./src/sort/select-sort.ts)
 - [归并排序](./src/sort/merge-sort.ts)
 - [堆排序](./src/sort/heap-sort.ts)
+- [快速排序](./src/sort/quick-sort.ts)
 
 ### 动态规划：
 - [最大子数组（O(n)复杂度解法）](./src/dp/maximum-subarray.ts)
@@ -42,5 +43,6 @@ TypeScript 语言实现的算法集。
 
 ### 分治算法：
 - [归并排序](./src/sort/merge-sort.ts)
+- [快速排序](./src/sort/quick-sort.ts)
 - [逆序对](./src/divide-and-conquer/inversion-pair.ts)
 - [最大子数组（最大子序和）](./src/divide-and-conquer/maximum-subarray.ts)
