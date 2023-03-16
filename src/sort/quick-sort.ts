@@ -84,4 +84,4 @@ function partition(arr: number[], start: number, end: number): number {
     return idx
 }
 
-export { quickSort }
+export { quickSort, partition }

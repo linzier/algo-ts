@@ -14,7 +14,10 @@ describe('bucket sort', () => {
         ]
 
         for (const i in data) {
+            const len = data[i].length
             bucketSort(data[i])
+
+            assert.equal(data[i].length, len)
 
             // 排序后，j 大于等于 j - 1
             for (let j = 1; j < data[i].length; j++) {
