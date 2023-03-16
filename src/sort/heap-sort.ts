@@ -1,4 +1,3 @@
-import { Heap } from '../data-structure/heap'
 /**
  * 堆排序
  * 使用大顶堆实现升序排序（小顶堆实现降序排序）
@@ -13,6 +12,8 @@ import { Heap } from '../data-structure/heap'
  *  3. 循环执行步骤1、2，直到堆中只剩一个元素（最后一个元素不需要交换了）；
  * 其实就是不断从数组剩余元素中取最大的，从数组末尾自右向左依次排列。
  */
+
+import { Heap } from '../data-structure/heap'
 
 class SortHeap extends Heap {
     /**

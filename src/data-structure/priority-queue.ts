@@ -1,5 +1,3 @@
-import { Heap } from './heap'
-
 /**
  * 优先队列
  * 此处实现最大优先队列
@@ -20,6 +18,8 @@ import { Heap } from './heap'
  *  queue.extract(): 从队列中取出最大 key；
  *  queue.changePriority(i, newKey): 修改节点 i 的值 为 newKey（调整优先级）；
  */
+
+import { Heap } from './heap'
 
 /**
  * 最大优先队列

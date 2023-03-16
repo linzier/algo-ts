@@ -1,5 +1,3 @@
-import { MaxSubInfo } from '../divide-and-conquer/maximum-subarray'
-
 /**
  * 最大子数组（又称为最大子序和）
  * 动态规划算法。时间复杂度：O(n)
@@ -25,6 +23,8 @@ import { MaxSubInfo } from '../divide-and-conquer/maximum-subarray'
  * 
  * 这里的关键是将“最大子数组”的概念转变为“以 j 为右边界的最大子数组”（前者属于后者的一个子集，求出全集后，通过比较即可得到最终解）。
  */
+
+import { MaxSubInfo } from '../divide-and-conquer/maximum-subarray'
 
 /**
  * 求 arr 的最大子数组，返回对应的子数组以及和

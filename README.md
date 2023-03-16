@@ -37,6 +37,8 @@ TypeScript 语言实现的算法集。
 - [堆排序](./src/sort/heap-sort.ts)
 - [快速排序](./src/sort/quick-sort.ts)
 - [计数排序](./src/sort/count-sort.ts)
+- [基数排序](./src/sort/radix-sort.ts)
+- [桶排序](./src/sort/bucket-sort.ts)
 
 ### 动态规划：
 - [最大子数组（O(n)复杂度解法）](./src/dp/maximum-subarray.ts)
