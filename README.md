@@ -29,6 +29,9 @@ TypeScript 语言实现的算法集。
 ### 数据结构:
 - [堆](./src/data-structure/heap.ts)
 - [优先队列](./src/data-structure/priority-queue.ts)
+- [链表](./src/data-structure/link.ts)
+- [栈](./src/data-structure/stack.ts)
+- [队列、循环队列](./src/data-structure/queue.ts)
 
 ### 排序：
 - [插入排序](./src/sort/insert-sort.ts)
