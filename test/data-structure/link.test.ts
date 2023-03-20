@@ -37,5 +37,22 @@ describe('double link', () => {
         assert.equal(link.size(), 1)
         link.delete(link.search(5))
         assert.equal(link.size(), 0)
+
+        // searchFunc
+        interface Val {
+            key: string;
+            val: string;
+        }
+        link.insert({ key: 'one', val: 1 })
+        link.insert({ key: 'two', val: 2 })
+        link.insert({ key: 'three', val: 3 })
+        const node4 = link.searchByFunc((data: unknown) => {
+            return (data as Val)?.key == 'two'
+        })
+        assert.equal((node4.data as Val).val, 2)
+        const node5 = link.searchByFunc((data: unknown) => {
+            return (data as Val)?.key == 'five'
+        })
+        assert.equal(node5, null)
     })
 })

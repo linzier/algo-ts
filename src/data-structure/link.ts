@@ -87,6 +87,24 @@ class Link {
     }
 
     /**
+     * 根据自定义函数查找 data
+     * @param data 
+     * @returns 如果找到，则返回对应的 Node，否则返回 null
+     */
+    public searchByFunc(compareFunc: (data: unknown) => boolean): Node | null {
+        let curr = this.sentinel.next
+        while (curr !== this.sentinel) {
+            if (compareFunc(curr.data)) {
+                return curr
+            }
+
+            curr = curr.next
+        }
+
+        return null
+    }
+
+    /**
      * 删除节点
      * 删除前：nodePrev -> node -> nodeNext
      * 删除后：nodePrev -> nodeNext，且 node 不再引用 nodePrev 和 nodeNext

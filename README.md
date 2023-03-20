@@ -32,6 +32,7 @@ TypeScript 语言实现的算法集。
 - [链表](./src/data-structure/link.ts)
 - [栈](./src/data-structure/stack.ts)
 - [队列、循环队列](./src/data-structure/queue.ts)
+- [散列表（链表法）](./src/data-structure/hashtable1.ts)
 
 ### 排序：
 - [插入排序](./src/sort/insert-sort.ts)
