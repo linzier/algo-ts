@@ -83,7 +83,7 @@ function findMinK(arr: number[], start: number, end: number, k: number): number 
     } else {
         // 在右边找
         // 因为 k 是从 0 开始的，所以 k - pt 得到新的相对距离后还要减去 1
-        return findMinK(arr, pt + 1, end, k - pt - 1)
+        return findMinK(arr, pt + 1, end, k - dist - 1)
     }
 }
 

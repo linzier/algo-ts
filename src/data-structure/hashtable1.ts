@@ -18,6 +18,17 @@
  *    （对于链表法来说就是从表头遍历到表尾。）
  *    为了解决此问题，当散列表的装载因子（α=m/n）达到某个阈值时，需要执行 rehash。一般创建一个大小为 2n 的新散列表，然后对旧散列表中的
  *    每个元素针对新散列表重新计算 hash 值，并据此迁移到新散列表中相应的位置。
+ * 
+ * 链表法表示的 hashtable 示意图：
+ *  0
+ *  1 -> (key1, val1) -> (key2, val2)
+ *  2
+ *  3 -> (key3, val3)
+ *  4 -> (key4, val4) -> (key5, val5) -> (key6, val6)
+ *  5
+ *  ...
+ * 其中纵列表示桶（数组），桶中存放链表。
+ * 查找元素的时候，先定位到桶，然后遍历桶中链表。
  */
 
 import { Link } from "./link"
@@ -206,7 +217,6 @@ class HashTable {
 
     /**
      * 为 key 计算 hash 值，范围 0 ~ cap-1
-     * 
      */
     private hash(key: string, cap = 0): number {
         cap = cap || this.arr.length

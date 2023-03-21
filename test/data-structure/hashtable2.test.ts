@@ -1,7 +1,8 @@
 import assert from "assert"
-import { HashTable } from '../../src/data-structure/hashtable1'
+import { HashTable } from '../../src/data-structure/hashtable2'
 
-describe('hash table（link method）', () => {
+
+describe('hash table（open addressing method）', () => {
     it('get、set', () => {
         const ht = new HashTable()
 
@@ -42,3 +43,4 @@ describe('hash table（link method）', () => {
         assert.equal(ht.capacity(), capacity)
     })
 })
+
