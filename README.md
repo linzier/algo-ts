@@ -34,6 +34,7 @@ TypeScript 语言实现的算法集。
 - [队列、循环队列](./src/data-structure/queue.ts)
 - [散列表（链表法）](./src/data-structure/hashtable1.ts)
 - [散列表（开放寻址法）](./src/data-structure/hashtable2.ts)
+- [二叉搜索树](./src/data-structure/bin-search-tree.ts)
 
 ### 排序：
 - [插入排序](./src/sort/insert-sort.ts)

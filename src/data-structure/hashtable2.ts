@@ -174,6 +174,7 @@ class HashTable {
         }
 
         // 标记删除
+        this.arr[slot].val = null
         this.arr[slot].isDel = true
         this.size--
 
@@ -237,7 +238,7 @@ class HashTable {
             const slot = (this.hash1(key) + i * this.hash2(key)) % cap
             if (
                 !forExists && (!this.arr[slot] || this.arr[slot].isDel) ||
-                forExists && this.arr[slot]
+                forExists && this.arr[slot] && this.arr[slot].key === key
             ) {
                 return slot
             }
@@ -247,7 +248,7 @@ class HashTable {
     }
 
     private hash1(key: string): number {
-        return this.string2number(key, 37)
+        return this.string2number(key, 13)
     }
 
     /**
@@ -255,7 +256,7 @@ class HashTable {
      * 我们约定 m 总是 2 的次方数，则让 hash2 返回奇数即可。
      */
     private hash2(key: string): number {
-        return (this.string2number(key, 11) | 1) >>> 0// 转成正数
+        return this.string2number(key, 11) | 1
     }
 
     /**
@@ -264,7 +265,7 @@ class HashTable {
     private string2number(key: string, factor: number): number {
         let total = 0;
         for (let i = 0; i < key.length; i++) {
-            total += factor * total + key.charCodeAt(i);
+            total = (total + factor * total + key.charCodeAt(i)) >>> 0;// 转成正数
         }
 
         return total

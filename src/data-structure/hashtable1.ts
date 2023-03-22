@@ -235,7 +235,7 @@ class HashTable {
     private string2number(key: string): number {
         let total = 0;
         for (let i = 0; i < key.length; i++) {
-            total += 37 * total + key.charCodeAt(i);
+            total = (total + 13 * total + key.charCodeAt(i)) >>> 0;// 转成正数
         }
 
         return total
