@@ -46,9 +46,9 @@ interface Node extends Value {
  * 为方便起见，这里限制 key 是 number 类型，另外对于查找和删除仅操作第一个匹配的节点
  */
 class BinSearchTree {
-    private root: Node | null
+    protected root: Node | null
     // 树节点数量
-    private _size: number
+    protected _size: number
 
     public constructor() {
         this.root = null
@@ -71,7 +71,7 @@ class BinSearchTree {
      * 计算 root 子树的最大深度
      * currDepth 表示 root 所处的深度
      */
-    private innerDepth(root: Node | null, currDepth: number): number {
+    protected innerDepth(root: Node | null, currDepth: number): number {
         if (!root || !root.left && !root.right) {
             return currDepth
         }
@@ -90,7 +90,7 @@ class BinSearchTree {
      * 
      * @param key - 关键字
      * @param val - 卫星数据
-     * @returns 为插入的元素生辰的树节点
+     * @returns 为插入的元素生成的树节点
      */
     public insert(key: number, val: unknown): Node {
         if (!this.root) {
@@ -135,7 +135,7 @@ class BinSearchTree {
         this._size++
     }
 
-    private newNode(key: number, val: unknown): Node {
+    protected newNode(key: number, val: unknown): Node {
         return { key, val, parent: null, left: null, right: null, flag: true }
     }
 
@@ -193,7 +193,7 @@ class BinSearchTree {
     /**
      * 用 y 子树替换 x 子树
      */
-    private transplant(x: Node, y: Node | null) {
+    protected transplant(x: Node, y: Node | null) {
         // 更新 x.parent
         if (!x.parent) {
             // x 是根节点
@@ -252,7 +252,7 @@ class BinSearchTree {
         return arr
     }
 
-    private inorder(x: Node | null, arr: Node[]): Node[] {
+    protected inorder(x: Node | null, arr: Node[]): Node[] {
         if (!x) {
             return
         }
@@ -278,7 +278,7 @@ class BinSearchTree {
         return arr
     }
 
-    private preorder(x: Node | null, arr: Node[]): Node[] {
+    protected preorder(x: Node | null, arr: Node[]): Node[] {
         if (!x) {
             return
         }
@@ -303,7 +303,7 @@ class BinSearchTree {
         return arr
     }
 
-    private postorder(x: Node | null, arr: Node[]): Node[] {
+    protected postorder(x: Node | null, arr: Node[]): Node[] {
         if (!x) {
             return
         }
@@ -439,7 +439,7 @@ class BinSearchTree {
     /**
      * 基于子数组 arr[start:end] 构建一棵以 node 为根节点的二叉树，返回根节点 node
      */
-    private static innerBuildFromOrderdArray(arr: Value[], start: number, end: number): Node | null {
+    protected static innerBuildFromOrderdArray(arr: Value[], start: number, end: number): Node | null {
         if (start > end) {
             // 空
             return null

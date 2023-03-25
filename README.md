@@ -36,6 +36,8 @@ TypeScript 语言实现的算法集。
 - [散列表（链表法）](./src/data-structure/hashtable1.ts)
 - [散列表（开放寻址法）](./src/data-structure/hashtable2.ts)
 - [二叉搜索树](./src/data-structure/bin-search-tree.ts)
+- [二分搜索](./src/data-structure/bin-search.ts)
+- [红黑树](./src/data-structure/red-black-tree.ts)
 
 ### 排序：
 - [插入排序](./src/sort/insert-sort.ts)
