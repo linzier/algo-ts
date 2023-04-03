@@ -205,13 +205,13 @@ class BinSearchTree {
         }
         
         // 没有找到，则视情况继续搜索左右子树
-        if (node.key < key) {
-            // 当前节点小于目标值，到右子树中搜索
-            return this.searchNode(key, node.right)
+        if (key < node.key) {
+            // 目标值小于当前节点，到左子树中搜索
+            return this.searchNode(key, node.left)
         }
         
-        // 当前节点大于目标值，到左子树中搜索
-        return this.searchNode(key, node.left)
+        // 目标值大于等于当前节点，到右子树中搜索
+        return this.searchNode(key, node.right)
     }
 
     /**
@@ -339,7 +339,7 @@ class BinSearchTree {
     /**
      * 在 x 子树中查找所有大于等于 start 且小于等于 end 的节点并放入 arr 中
      */
-    private innerRange(x: Node, start: number, end: number, arr: Node[]): Node[] {
+    private innerRange(x: Node, start: number, end: number, arr: Node[]) {
         if (!x) {
             return
         }

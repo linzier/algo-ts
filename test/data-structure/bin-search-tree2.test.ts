@@ -49,7 +49,7 @@ function commonAssertTree(tree: BinSearchTree, total: number) {
     }
 }
 
-describe('bin search tree', () => {
+describe('bin search tree(recurrence)', () => {
     it('insert、delete、search on tree', () => {
         const tree = new BinSearchTree()
 
