@@ -252,7 +252,7 @@ class BinSearchTree {
         return arr
     }
 
-    protected inorder(x: Node | null, arr: Node[]): Node[] {
+    protected inorder(x: Node | null, arr: Node[]) {
         if (!x) {
             return
         }
@@ -278,7 +278,7 @@ class BinSearchTree {
         return arr
     }
 
-    protected preorder(x: Node | null, arr: Node[]): Node[] {
+    protected preorder(x: Node | null, arr: Node[]) {
         if (!x) {
             return
         }
@@ -303,7 +303,7 @@ class BinSearchTree {
         return arr
     }
 
-    protected postorder(x: Node | null, arr: Node[]): Node[] {
+    protected postorder(x: Node | null, arr: Node[]) {
         if (!x) {
             return
         }
