@@ -22,6 +22,8 @@
  *                          /
  *                         9
  * 下面的操作皆以此二叉树为例说明。
+ * 
+ * @see {@link https://www.cnblogs.com/linvanda/p/17283480.html} 本文详细介绍了二叉搜索树的实现原理。
  */
 
 interface Value {

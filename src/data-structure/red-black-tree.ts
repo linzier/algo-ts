@@ -57,6 +57,9 @@ interface Node extends Value {
     left: Node | null;
     right: Node | null;
     color: 'RED' | 'BLACK';
+    // 以该节点为根的子树中包含多少个节点（包括该节点），用以实现顺序统计功能
+    // 公式：node.size = node.left.size + node.right.size + 1
+    size: number;
 }
 
 /**
@@ -104,6 +107,7 @@ class RedBlackTree {
     /**
      * 让节点 h 相对于 h.right 执行左旋
      * 左旋不会改变任何路径上黑节点的数量
+     * 该操作能保证 h 子树中所有节点的 size 属性能正确更新
      * 左旋之前：h 可能是红色或者黑色；h.right（设为 x） 是红色；
      *                   |
      *                  [h]
@@ -133,12 +137,17 @@ class RedBlackTree {
         x.color = h.color
         h.color = 'RED'
 
+        // 更新 size
+        this.updateSize(h)
+        this.updateSize(x)
+
         return x
     }
 
     /**
      * 让节点 h 相对于 h.left 执行右旋
      * 右旋不会改变任何路径上黑节点的数量
+     * 该操作能保证 h 子树中所有节点的 size 属性能正确更新
      * 右旋前：h 可能是红色或者黑色，h.left（x）是红色。
      *                |
      *               [h]
@@ -167,6 +176,10 @@ class RedBlackTree {
 
         x.color = h.color
         h.color = 'RED'
+
+        // 更新 size
+        this.updateSize(h)
+        this.updateSize(x)
 
         return x
     }
@@ -199,6 +212,10 @@ class RedBlackTree {
         h.color = h.left.color
         h.left.color = hColor
         h.right.color = hColor
+    }
+
+    protected updateSize(x: Node) {
+        x.size = (x.left ? x.left.size : 0) + (x.right ? x.right.size : 0) + 1
     }
 
     /**
@@ -288,6 +305,9 @@ class RedBlackTree {
             p.right = this.innerInsert(p.right, value)
         }
 
+        // 更新 size
+        this.updateSize(p)
+
         // 修复红黑性质
         return this.balance(p)
     }
@@ -317,7 +337,7 @@ class RedBlackTree {
     }
 
     protected newNode(key: number, val: unknown): Node {
-        return { key, val, left: null, right: null, color: 'RED' }
+        return { key, val, left: null, right: null, color: 'RED', size: 1 }
     }
 
     /**
@@ -400,6 +420,9 @@ class RedBlackTree {
         // 递归处理 x.left
         x.left = this.innerDeleteMin(x.left)
 
+        // 更新 x.size
+        this.updateSize(x)
+
         // 删除 x 后，执行 balance 操作（因为 moveRedLeft 可能导致出现右倾的红色节点）
         // 第一次回溯的是 x 的父节点（而不是 x）
         return this.balance(x)
@@ -413,6 +436,7 @@ class RedBlackTree {
      * 此处不解决此问题，而是留给回溯阶段解决
      * 
      * 注意：moveRedLeft 不会修改 x 的左子树的结构（但可能会修改右子树的结构），这很重要
+     * 该操作能保证 x 子树中所有节点的 size 能正确更新
      * 
      * @returns 传递并修复后返回该子树新的根（可能不是原来那个了）
      */
@@ -437,6 +461,8 @@ class RedBlackTree {
          */
         if (x.right && this.isRed(x.right.left)) {
             x.right = this.rotateRight(x.right)
+            // 先更新 x.size
+            this.updateSize(x)
             x = this.rotateLeft(x)
             this.flipColors(x)
         }
@@ -495,6 +521,9 @@ class RedBlackTree {
 
         // 递归处理右子节点
         x.right = this.innerDeleteMax(x.right)
+
+        // 更新 x.size
+        this.updateSize(x)
 
         // 删除后，执行 balance 恢复红黑树性质
         // 因为 moveRedRight 的过程可能带来右倾的红节点
@@ -622,6 +651,8 @@ class RedBlackTree {
                 x.right = this.innerDelete(x.right, key)
             }
         }
+
+        this.updateSize(x)
 
         // 删除完毕，从下往上（回溯）执行 balance
         return this.balance(x)
@@ -757,6 +788,76 @@ class RedBlackTree {
         }
 
         return curr
+    }
+
+    /**
+     * 顺序统计：返回树中第 i 小的节点
+     * @param i - 从 1 开始
+     */
+    public osSelect(i: number): Node | null {
+        if (i > this._size) {
+            return null
+        }
+
+        return this.innerOsSelect(this.root, i)
+    }
+
+    /**
+     * 返回 x 子树中第 i 小的节点
+     * x 节点是 x 子树中第 x.left.size + 1 小的节点
+     */
+    private innerOsSelect(x: Node, i: number): Node {
+        if (!x) {
+            return null
+        }
+
+        // x 节点在子树中的位置
+        const pos = x.left ? x.left.size + 1 : 1
+
+        if (i === pos) {
+            return x
+        }
+
+        if (i < pos) {
+            // x 的位置大于 i，则去 x 的左子树中查找
+            return this.innerOsSelect(x.left, i)
+        }
+
+        // 到右子树中查找，注意此时在右子树中要查找的是 i - pos 小的节点
+        return this.innerOsSelect(x.right, i - pos)
+    }
+
+    /**
+     * 顺序统计：返回节点 x 在树中按中序遍历所在的位置（从 1 开始计算）。如果不存在，则返回 -1
+     * 我们将树形结构展开为有序数组：...... | ...... | ...x...|......，由一系列子数组构成，要求的 x 的位置，
+     * 需先求出 x 在其子数组（子树）中的位置，然后加上该子数组在整个数组中的偏移量。
+     * @param x - 节点
+     */
+    public osRank(x: Node): number {
+        if (!this.root) {
+            return -1
+        }
+
+        return this.innerOsRank(this.root, x)
+    }
+
+    /**
+     * 求节点 x 在 root 子树中的位置
+     */
+    private innerOsRank(root: Node, x: Node): number {
+        if (root === x) {
+            // root 就是 x 自身，直接返回
+            return root.left ? root.left.size + 1 : 1
+        }
+
+        if (x.key < root.key) {
+            // x 比 root 小，到 root 的左子树查找
+            return this.innerOsRank(root.left, x)
+        }
+
+        // x >= root，去右边查
+        // 去右边查的时候，需要加上 root 节点在树中的位置（因为右子树中元素的位置是相对于 root 的）
+        return (root.left ? root.left.size + 1 : 1) + this.innerOsRank(root.right, x)
     }
 }
 

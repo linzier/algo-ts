@@ -78,6 +78,23 @@ class TestTree extends RedBlackTree {
         return true
     }
 
+    public doesNodeSizeOK(node?: Node): boolean {
+        node = node === undefined ? this.root : node
+
+        if (!node) {
+            return true
+        }
+
+        // 当前节点的 size 是否 ok
+        const ok = node.size === ((node.left ? node.left.size : 0) + (node.right ? node.right.size : 0) + 1)
+        if (!ok) {
+            console.log('curr:', node.size,'; left:', (node.left ? node.left.size : 0), '; right:', (node.right ? node.right.size : 0))
+        }
+
+        // 需要自身、左子树、右子树都 OK
+        return ok && this.doesNodeSizeOK(node.left) && this.doesNodeSizeOK(node.right)
+    }
+
     /**
      * 计算子树 node 中到叶子节点的每条路径上黑色节点的数量并写入到 results 中
      * currCnt 表示走到当前子树之前已经有的黑节点数量
@@ -102,6 +119,7 @@ function commonAssert(tree: TestTree) {
     assert.ok(tree.dontHaveRightBlack())
     assert.ok(tree.dontHaveContinuousRedNode())
     assert.ok(tree.doesAllPathsHasSameBlackNodes())
+    assert.ok(tree.doesNodeSizeOK())
 }
 
 describe('red black tree', () => {
@@ -163,6 +181,7 @@ describe('red black tree', () => {
             assert.equal(tree.size(), 0)
         }
 
+        // 1, 2, 3, 5, 7, 23, 81, 90, 190
         const arr = [1, 5, 2, 3, 7, 23, 190, 81, 90]
         const tree = new TestTree()
 
@@ -179,10 +198,22 @@ describe('red black tree', () => {
         assert.equal(tree.minimum().key, 1)
         assert.equal(tree.maximum().key, 190)
 
+        // 顺序统计量
+        assert.equal(tree.osSelect(1).key, 1)
+        assert.equal(tree.osSelect(2).key, 2)
+        assert.equal(tree.osSelect(4).key, 5)
+        assert.equal(tree.osSelect(9).key, 190)
+        assert.equal(tree.osRank(tree.searchNode(1)), 1)
+        assert.equal(tree.osRank(tree.searchNode(2)), 2)
+        assert.equal(tree.osRank(tree.searchNode(5)), 4)
+        assert.equal(tree.osRank(tree.searchNode(190)), 9)
+
         tree.deleteMin()
         assert.equal(tree.minimum().key, 2)
 
         tree.deleteMax()
         assert.equal(tree.maximum().key, 90)
+
+        commonAssert(tree)
     })
 })
