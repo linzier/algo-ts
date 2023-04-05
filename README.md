@@ -53,6 +53,7 @@ TypeScript 语言实现的算法集。
 
 ### 动态规划：
 - [最大子数组（O(n)复杂度解法）](./src/dp/maximum-subarray.ts)
+- [最长公共子序列](./src/dp/longest-common-subsequence.ts)
 
 ### 贪心算法：
 

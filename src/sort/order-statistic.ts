@@ -12,6 +12,9 @@
  *  2. 如果 k 刚好等于 i（假设 i 从 0 开始），则 A[k] 就是第 i 小的元素；
  *  3. 如果 k 大于 i，说明第 i 小的元素在 k 的左边，对 A[0:k-1] 继续执行快排；
  *  4. 如果 k 小于 i，说明第 i 小的元素在 k 的右边，对 A[k+1:n-1] 继续执行快排；
+ * 
+ * 注：除了用快排在 O(n) 复杂度实现顺序统计量，还可以用红黑树在 O(logn) 复杂度实现。
+ * @see 参见 data-structure/red-black-tree.ts
  */
 
 import { partition } from './quick-sort'
