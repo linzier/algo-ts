@@ -56,6 +56,7 @@ TypeScript 语言实现的算法集。
 - [最长公共子序列](./src/dp/longest-common-subsequence.ts)
 - [数字三角形](./src/dp/number-triangle.ts)
 - [最长回文子序列](./src/dp/longest-palindrome-subseq.ts)
+- [最小编辑距离](./src/dp/min-edit-distance.ts)
 
 ### 贪心算法：
 
