@@ -57,7 +57,8 @@ TypeScript 语言实现的算法集。
 - [数字三角形](./src/dp/number-triangle.ts)
 - [最长回文子序列](./src/dp/longest-palindrome-subseq.ts)
 - [最小编辑距离](./src/dp/min-edit-distance.ts)
-- [0-1 背包问题](./src/dp/0-1-knapsack.ts)
+- [0/1 背包问题](./src/dp/0-1-knapsack.ts)
+- [完全背包问题](./src/dp/complete-knapsack.ts)
 
 ### 贪心算法：
 
