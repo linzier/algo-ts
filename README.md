@@ -62,6 +62,7 @@ TypeScript 语言实现的算法集。
 - [多重背包](./src/dp/multi-knapsack.ts)
 
 ### 贪心算法：
+- [活动选择问题](./src/greedy/activity-select.ts)
 
 ### 分治算法：
 - [归并排序](./src/sort/merge-sort.ts)
