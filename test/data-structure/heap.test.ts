@@ -1,28 +1,44 @@
 import assert from "assert"
-import { Heap } from '../../src/data-structure/heap'
+import { Heap, Value } from '../../src/data-structure/heap'
 
-const arrs = [
+const arrs: Value[][] = [
     [],
-    [2],
-    [1, 2, 3, 4, 5, 6, 7],
-    [7, 6, 5, 4, 3, 2, 1],
-    [1, 1, 1, 1, 1, 1, 1],
-    [5, 1, 4, 6, 9, 2, 12, 8, 8, 78, 463, 12, 34, 1, 3],
+    [{ key: 2, val: 0 }],
+    [{ key: 1, val: 0 }, { key: 2, val: 0 }, { key: 3, val: 0 }, { key: 4, val: 0 }, { key: 5, val: 0 }, { key: 6, val: 0 }, { key: 7, val: 0 }],
+    [{ key: 7, val: 0 }, { key: 6, val: 0 }, { key: 5, val: 0 }, { key: 4, val: 0 }, { key: 3, val: 0 }, { key: 2, val: 0 }, { key: 1, val: 0 }],
+    [{ key: 1, val: 0 }, { key: 1, val: 0 }, { key: 1, val: 0 }, { key: 1, val: 0 }, { key: 1, val: 0 }, { key: 1, val: 0 }, { key: 1, val: 0 }],
+    [
+        { key: 5, val: 0 },
+        { key: 1, val: 0 },
+        { key: 4, val: 0 },
+        { key: 6, val: 0 },
+        { key: 9, val: 0 },
+        { key: 2, val: 0 },
+        { key: 12, val: 0 },
+        { key: 8, val: 0 },
+        { key: 78, val: 0 },
+        { key: 463, val: 0 },
+        { key: 12, val: 0 },
+        { key: 34, val: 0 },
+        { key: 1, val: 0 },
+        { key: 3, val: 0 },
+    ]
 ]
 
 describe('heap', () => {
     it('build heap from array', () => {
         for (const arr of arrs) {
+            // 取数组副本
             const maxHeap = new Heap(arr.slice(0), true)
             assert.equal(maxHeap.size(), arr.length)
 
             // 检验大顶堆的正确性（依次 pop，前面的总比后面的大（或等于））
             let prev = Infinity
-            let curr: number
+            let curr: Value
             while (!maxHeap.isEmpty()) {
                 curr = maxHeap.pop()
-                assert.ok(prev >= curr)
-                prev = curr
+                assert.ok(prev >= (curr.key as number))
+                prev = curr.key as number
             }
 
             assert.equal(maxHeap.size(), 0)
@@ -39,10 +55,10 @@ describe('heap', () => {
             if (!maxHeap.isEmpty()) {
                 maxHeap.pop()
                 assert.equal(maxHeap.size(), len - 1)
-                maxHeap.push(2)
-                maxHeap.push(4)
-                maxHeap.push(88)
-                maxHeap.push(23)
+                maxHeap.push({ key: 2, val: 0 })
+                maxHeap.push({ key: 4, val: 0 })
+                maxHeap.push({ key: 88, val: 0 })
+                maxHeap.push({ key: 13, val: 0 })
                 assert.equal(maxHeap.size(), len + 3)
             } else {
                 assert.throws(() => {
@@ -52,13 +68,13 @@ describe('heap', () => {
 
             // 经过一番 push、pop 后仍然保持堆的特性
             let prev = Infinity
-            let curr: number
+            let curr: Value
             while (!maxHeap.isEmpty()) {
                 curr = maxHeap.pop()
 
-                assert.ok(prev >= curr)
+                assert.ok(prev >= (curr.key as number))
 
-                prev = curr
+                prev = curr.key as number
             }
 
             assert.equal(maxHeap.size(), 0)

@@ -29,8 +29,16 @@
  *  RIGHT(i) 表示 i 的右子节点;
  *  PARENT(i) 表示 i 的父节点;
  */
+
+interface Value {
+    // 关键字，此处支持 string 和 number 两种类型
+    key: string | number,
+    // 值（卫星数据），任意类型
+    val: unknown;
+}
+
 class Heap {
-    protected data: number[]
+    protected data: Value[]
     // 堆中元素数量
     protected _size: number
     // 是否大顶堆
@@ -43,12 +51,12 @@ class Heap {
      * @param data - 用于构建堆的数组
      * @param isMax - 是否大顶堆
      */
-    public constructor(data: number[], isMax: boolean) {
+    public constructor(data: Value[], isMax: boolean) {
         this.isMax = isMax
         this._size = data.length
         this.data = data
         // 第一个位置不用
-        this.data.unshift(0)
+        this.data.unshift({ key: '', val: null })
 
         // 构建堆
         this.build()
@@ -66,7 +74,7 @@ class Heap {
      * 弹出堆顶元素
      * 弹出后，从堆尾拿一个元素放到堆顶，然后对堆顶执行 heapify
      */
-    public pop(): number {
+    public pop(): Value {
         if (this._size == 0) {
             throw new Error('heap is empty')
         }
@@ -74,17 +82,20 @@ class Heap {
         // 取出第一个元素（堆顶）
         const ele = this.data[1]
         // 将最后一个元素放到堆顶
-        this.data[1] = this.data.pop() as number
+        const last = this.data.pop()
         this._size -= 1
 
-        /**
-         * 将最后一个元素放到堆顶后，新堆顶可能不再满足堆的性质，需要执行堆化
-         * 之所以从堆尾拿一个元素填到堆顶：假设我们从其它地方（如原堆顶的左/右子节点）拿元素填到堆顶，那么就会破坏下方
-         * 子树的结构，从而造成连锁反应（需要不断向下拿）。
-         * 从堆尾拿元素，因为堆尾节点下面没有子节点（也没有右邻居节点），因而不会产生这种级联影响，能保证整个堆除了根以外
-         * 的其他任何子树仍然满足堆的性质，从而我们对堆顶执行 heapify 即可。
-         */
-        this.heapify(1)
+        if (this._size > 0) {
+            this.data[1] = last
+            /**
+             * 将最后一个元素放到堆顶后，新堆顶可能不再满足堆的性质，需要执行堆化
+             * 之所以从堆尾拿一个元素填到堆顶：假设我们从其它地方（如原堆顶的左/右子节点）拿元素填到堆顶，那么就会破坏下方
+             * 子树的结构，从而造成连锁反应（需要不断向下拿）。
+             * 从堆尾拿元素，因为堆尾节点下面没有子节点（也没有右邻居节点），因而不会产生这种级联影响，能保证整个堆除了根以外
+             * 的其他任何子树仍然满足堆的性质，从而我们对堆顶执行 heapify 即可。
+             */
+            this.heapify(1)
+        }
 
         return ele
     }
@@ -96,7 +107,7 @@ class Heap {
      * （一个节点，顺着其父节点递归向上是已经排好序的） 
      * @returns 返回元素 ele 被插入到的节点位置
      */
-    public push(ele: number): number {
+    public push(ele: Value): number {
         // 将元素加到末尾
         this.data.push(ele)
         this._size += 1
@@ -122,7 +133,7 @@ class Heap {
             // 父节点位置
             const parent = i >> 1
 
-            if (this.isMax && this.data[parent] >= curr || !this.isMax && this.data[parent] <= curr) {
+            if (this.isMax && this.data[parent].key >= curr.key || !this.isMax && this.data[parent].key <= curr.key) {
                 // 符合条件了，将 curr 赋值到该位置，结束
                 this.data[i] = curr
                 return i
@@ -208,12 +219,12 @@ class Heap {
 
         let peak = p
         // 先取父节点与左子节点之间最大/最小的那个
-        if (isMax && data[peak] < data[l] || !isMax && data[peak] > data[l]) {
+        if (isMax && data[peak].key < data[l].key || !isMax && data[peak].key > data[l].key) {
             peak = l
         }
 
         // 继上面选出最大/最小节点后，再跟右子节点比较，选出最大/最小的那个，如此便选出了三者中最大/最小的那个
-        if (r <= this._size && (isMax && data[peak] < data[r] || !isMax && data[peak] > data[r])) {
+        if (r <= this._size && (isMax && data[peak].key < data[r].key || !isMax && data[peak].key > data[r].key)) {
             peak = r
         }
 
@@ -221,4 +232,4 @@ class Heap {
     }
 }
 
-export { Heap }
+export { Heap, Value }
