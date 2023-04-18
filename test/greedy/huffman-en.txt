@@ -1,0 +1,219 @@
+Scientists have released a more detailed version of the first image of a black hole.
+
+That first image, released four years ago, showed a blurry, round-shaped orange object. Now, researchers have used machine learning methods to create an improved picture.
+
+The new image was recently published in the Astrophysical Journal Letters. The same shape remains as in the first image, but it has a narrower ring and sharper resolution.
+
+This combination of images provided by researcher Lia Medeiros shows images of the M87 black hole released in 2019, left, and an updated one for 2023. (Lia Medeiros via AP)
+This combination of images provided by researcher Lia Medeiros shows images of the M87 black hole released in 2019, left, and an updated one for 2023. (Lia Medeiros via AP)
+Scientists have said the black hole in the image sits at the center of a galaxy called M87, more than 53 million light-years from Earth. A light year is the distance light travels in a year --- about 9.5 trillion kilometers. The mass of the black hole is 6.5 billion times greater than that of Earth's sun.
+
+A network of radio telescopes around the world gathered the data used to make the image. But even with many telescopes working together, holes remained in the data. In the latest study, scientists depended on the same data, but used machine learning methods to fill in the missing information.
+
+The resulting picture looks similar to the image, but with a thinner "doughnut" and a darker center, the researchers said.
+
+"For me, it feels like we're really seeing it for the first time," said the lead writer of the study, Lia Medeiros. She is an astrophysicist at the Institute for Advanced Study in New Jersey.
+
+She said it was the first time the team had used machine learning to fill in the data holes.
+
+With a clearer picture, researchers hope to learn more about the black hole's properties and gravity in future studies. Medeiros said the team also plans to use machine learning on other images of space objects. This could include the black hole at the center of our galaxy, the Milky Way.
+
+The study's four writers are members of the Event Horizon Telescope (EHT) project. It is an international effort begun in 2012 with the goal of directly observing a black hole's nearby environment. A black hole's event horizon is the point beyond which anything - stars, planets, gas, dust and all forms of electromagnetic radiation – can escape.
+
+Dimitrios Psaltis is an astrophysicist at Georgia Institute of Technology in Atlanta, Georgia. He told Reuters news agency the main reason the first image had many gaps is because of where the observing telescopes sit. The telescopes operate from the tops of mountains and "are few and far apart from each other," Psaltis said.
+
+As a result, the telescope system has a lot of 'holes' and scientists can now use machine learning methods to fill in those gaps, he added. "The image we report in the new paper is the most accurate representation of the black hole image that we can obtain with our globe-wide telescope," Psaltis said.
+
+I'm Bryan Lynn.
+
+The Associated Press and Reuters reported on this story. Bryan Lynn adapted the reports for VOA Learning English.
+
+The National Oceanic and Atmospheric Administration (or NOAA) recently reported that the atmospheric gas methane increased in 2022.
+
+NOAA is the U.S. weather agency. It also studies the substances in the atmosphere.
+
+NOAA said methane in the atmosphere had its fourth-highest yearly increase since measurements have taken place. The agency said the increase was part of a rise in greenhouse gases that it called "alarming." Greenhouse gases are linked to warming in the Earth's atmosphere.
+
+FILE - A person picks through trash for reusable items as a fire rages at the Bhalswa landfill in New Delhi, April 27, 2022. (AP Photo/Manish Swarup, File)
+FILE - A person picks through trash for reusable items as a fire rages at the Bhalswa landfill in New Delhi, April 27, 2022. (AP Photo/Manish Swarup, File)
+Scientists pay a lot of attention to carbon dioxide for its part in warming. But they also are concerned about methane because it traps more heat. If measured over 20 years, methane is said to trap about 87 times more heat than carbon dioxide.
+
+Methane is a gas released, or emitted, from living things and carbon substances. Farm animals, microorganisms, waste, oil, and natural gas all can release methane.
+
+NOAA Administrator Rick Spinrad said the observations collected by NOAA scientists in 2022 show that greenhouse gas emissions continue to rise at an alarming rate. He said they will stay in the atmosphere for thousands of years. He said, "The time is now to address greenhouse gas pollution and to lower human-caused emissions as we continue to build toward a climate-ready nation."
+
+Scientists say methane rose by 14 parts per billion (or ppb) to 1,911.9 parts per billion in 2022. One part per billion is equal to one ten-millionth of a percent. Methane rose a little faster in 2020 and 2021. NOAA said in its report that it does not know the reason for the increase.
+
+Stephen Porder is a professor of ecology at Brown University in the state of Rhode Island. He said that farm animals like goats, sheep, and cows are among the largest causes of methane from human activity.
+
+Scientists also say that methane emissions from the fossil fuel industry and the environment are underestimated.
+
+Benjamin Poulter is a NASA research scientist. He said the U.S. space agency has found "over half of the methane emissions are coming from human activities."
+
+The exact amount of methane that comes from human activity compared to natural activity is not known. But scientists say humans have little control over methane that comes from the environment.
+
+Drew Shindell is a Duke University professor and former climate scientist at NASA. He said if wetlands and natural systems create more gasses because of climate change, "...then that's very frightening because we can't do much to stop it."
+
+He said, if methane leaks from the fossil fuel industry, then governments can make laws to control it. But governments cannot make laws that control what wetlands do.
+
+Scientists are also investigating how a weather event called La Nina could influence levels of methane because of increased rainfall in warm places.
+
+Shindell told the Associated Press that methane caused by humans is responsible for about 26 percent of the warming caused by human activities.
+
+Porder said reducing fossil fuels and reducing the number of farm animals are ways to reduce methane in the atmosphere.
+
+The International Energy Agency estimates that 70 percent of 2022's methane could be reduced with existing technology.
+
+The NOAA report said the greenhouse gases carbon dioxide and the gas nitrous oxide also increased in 2022.
+
+Carbon dioxide levels rose to 417.06 parts per million (or ppm) in 2022. One part per million is one ten-thousandth of a percent. Nitrous oxide, which NOAA calls the third-most damaging greenhouse gas emitted by humans, rose to 335.7 parts per billion. The agency blamed fertilizers and products from agriculture.
+
+I'm Gregory Stachel.
+
+Isabella O'Malley reported this story for The Associated Press. Gregory Stachel adapted it for VOA Learning English.
+
+Along the streets of Malabon in the Philippines, Marilene Capentes pushes a cart every morning except Sundays. The city of Malabon is just north of the capital, Manila.
+
+Capentes is a waste picker. She collects bags of separated garbage, placing food waste in one container. This material will be turned into compost at the local recycling facility. The rest of the waste goes into separate containers. The recyclable materials are later sold.
+
+Capentes said the heavy garbage used to be all mixed together. Then a few years ago, a local environmental nonprofit started asking people to separate their garbage.
+
+Marilene Capentes pushes her cart of separated garbage along the streets of Malabon, Philippines on Feb. 13, 2023. (AP Photo/Aaron Favila)
+Marilene Capentes pushes her cart of separated garbage along the streets of Malabon, Philippines on Feb. 13, 2023. (AP Photo/Aaron Favila)
+The Mother Earth Foundation in the Philippines is a member of the Global Alliance for Incinerator Alternatives, called GAIA. The organization wants to prevent food waste from going to landfills. Food waste gives off methane gas as it breaks down. Methane is a powerful greenhouse gas.
+
+Methane traps more heat than carbon dioxide. But it does not stay in the atmosphere nearly as long -- around 12 years compared with hundreds of years.
+
+GAIA says preventing organic waste from going to landfills or being burned is a proven and cost-effective climate solution. The environmental organization supports its members, including waste pickers, around the world. GAIA is working with governments to set up systems to separate and collect organic waste and establish facilities to compost it.
+
+At a materials recycling facility in Malabon, organic waste collected from households is turned into compost. This material then goes into a community garden to grow vegetables. Some of the food waste is broken down into biogas. This biogas is then used to cook vegetables for waste workers to eat.
+
+It is a complete cycle, said Froilan Grate, chief of GAIA Asia Pacific, based in Manila.
+
+Grate said there are challenges in establishing these systems in new places. It costs money to set up a facility for composting. People, including local officials, have to be educated on the importance of separating waste. Containers have to be provided to households that cannot buy more than one.
+
+And sometimes separating organic waste is not thought to be important. Also, unlike recyclables and metals, there is not a large market for organic materials. Therefore, waste workers must be paid for the system to work.
+
+But Grate believes these problems can be solved. More people are making the connection between reducing methane and fighting climate change.
+
+The world needs better systems for dealing with waste because the current methods are adding to warming, said Kait Siegel. She leads the methane pollution prevention team at the environmental nonprofit Clean Air Task Force. She said the treatment of organic matter is an important way to reduce methane gas.
+
+"We've seen these solutions make a difference in countries around the world," she said. "We're all creating organic waste in our day-to-day lives...."
+
+The Global Methane Pledge, launched in November 2021, has pushed countries to examine their sources of methane. More than 100 countries, including the United States, have agreed to reduce methane emissions by 30 percent by 2030. However, other countries that produce large amounts of methane refused.
+
+Brazil is one of the world's five largest methane creators. Since President Luiz Inácio Lula da Silva took office in January, there has been growing support for waste pickers, waste recycling, and fighting climate change, said Victor Hugo Argentino de Morais Vieira. He is a waste adviser and researcher at Instituto Pólis, a non-governmental, non-profit organization in Brazil.
+
+In Bahia, a popular tourist area, a large composting site has been operating for years. Waste pickers there developed a system for their work collecting organic garbage from hotels and restaurants. But few other waste pickers collect food waste.
+
+In South Africa, it is also not common to separate organic waste. But for the past two years the idea has been tested at a large market in the port city of Durban.
+
+"It can be a game changer for the continent," said Niven Reddy, the African regional coordinator for GAIA. "It can be tested and tried. If it works in Africa in one place, it's likely to work someplace else — 400,000 people go through that market a day."
+
+GAIA leaders like Reddy are looking to the systems established in the Philippines as a model.
+
+I'm Anna Matteo. And I'm Andrew Smith.
+
+Jennifer Mcdermott, Joeal Calupitan wrote this story for the Associated Press. Anna Matteo adapted it for VOA Learning English.
+
+A rocket made almost entirely of 3D-printed parts started its first flight late Wednesday but failed to reach orbit. The 33-meter-long rocket, called Terran 1, took off from Cape Canaveral, Florida.
+
+The startup company Relativity Space created 85 percent of the rocket using 3D printing technology. Most parts came from the company's large printing center in Long Beach, California.
+
+Terran 1 took off successfully and stayed in the air for three minutes. The first stage, or lower part, of the rocket launched and separated as planned. The upper stage, however, appeared to ignite and then shut down, sending it crashing into the Atlantic Ocean.
+
+Relativity Space's 3D-printed rocket Terran 1 sits on the launch pad in Cape Canaveral, Florida on March 8. The company's launch on March 22 failed. (Trevor Mahlmann/Relativity Space via REUTERS)
+Relativity Space's 3D-printed rocket Terran 1 sits on the launch pad in Cape Canaveral, Florida on March 8. The company's launch on March 22 failed. (Trevor Mahlmann/Relativity Space via REUTERS)
+Relativity Space had hoped for the rocket to stay in orbit for several days before falling through Earth's atmosphere and burning up.
+
+It was the second failed launch by Relativity Space this month. The company called off an attempt 12 days ago just seconds before takeoff.
+
+Though the rocket did not reach orbit, the company said it was pleased with the launch.
+
+Arwa Tizani Kelly works for Relativity Space and discussed the launch. Kelly said that "(first) launches are always exciting and today's flight was no exception."
+
+Although other space businesses use 3D-printed materials, the pieces make up only a small part of their rockets.
+
+Relativity Space was founded in 2015 by two young engineers. The company said it is working to develop larger versions of the rocket that will have even more 3D-printed material.
+
+I'm Dan Friedell.
+
+A recently launched satellite designed to study all water across the world has begun sending its first images back to Earth.
+
+The American space agency NASA says the satellite is expected to measure the elevation of nearly all water on Earth's surface. It is the largest and most detailed effort yet to map the world's water.
+
+The satellite is called SWOT, which stands for Surface Water and Ocean Topography. SWOT is a joint project between NASA and the French space agency, CNES.
+
+The advanced radar SWOT satellite, short for Surface Water and Ocean Topography and designed and built at NASA's Jet Propulsion Laboratory (JPL) near Los Angeles, is seen in an artist's rendition created in February 2015. 
+The advanced radar SWOT satellite, short for Surface Water and Ocean Topography and designed and built at NASA's Jet Propulsion Laboratory (JPL) near Los Angeles, is seen in an artist's rendition created in February 2015.
+The satellite uses radar technology and other instruments to collect detailed height and surface measurements of water in oceans, lakes and rivers. Oceans cover more than 70 percent of Earth's surface.
+
+Researchers say the information can help them learn more about how the world's water supply influences climate change.
+
+One major goal of the project is to research how oceans take in atmospheric heat and carbon dioxide. The natural process moderates temperatures and climate change.
+
+Data will be recorded from radar readings on about 90 percent of Earth's surface. Such data can support efforts to learn about ocean currents, predict the weather and control freshwater supplies in areas with little rain, NASA says.
+
+The information is also expected to assist communities as they seek to improve and manage their water resources and prepare for floods and other disasters, the researchers said.
+
+NASA Administrator Bill Nelson spoke about SWOT's activities as the first observations of the world's water supply arrived to Earth.
+
+"SWOT's advanced imagery will empower researchers and advance the way we manage fresh water and the effects of sea level rise" across the world, Nelson said in a statement. He added that water is one of the planet's most important resources and is threatened by elements of climate change.
+
+"SWOT will provide critical information that communities can use to prepare for the impacts of a warming climate," Nelson added.
+
+The images use colors to identify elevation levels in different bodies of water. In one example of its first work, SWOT measured sea levels off the coast of North Carolina and Virginia. A radar instrument on the satellite collected data on an ocean area about 120 kilometers across.
+
+NASA said red and orange areas in the images represented sea levels that were higher than the worldwide average. On the other hand, areas shown in blue represented sea levels that were lower than average.
+
+The research team involved in the project said SWOT provides big improvements over measurements captured by other space-based instruments called altimeters. Those instruments are only able to look at a narrow area of Earth directly beneath them. But NASA says SWOT's instruments are designed to observe sea levels across much wider areas.
+
+SWOT's radar instrument can also collect data through clouds and darkness. This will permit scientists to map observations under different weather conditions and cover large areas at any time of day.
+
+Philippe Baptiste is the chairman and chief executive of CNES. He said in a statement, "Our ability to measure freshwater resources on a global scale through satellite data is of prime importance as we seek to adjust to a changing climate."
+
+He added: "The first views from SWOT give us a clearer picture than ever before. These data will prove highly valuable for the international community in the fields of hydrology, oceanography, and coastal studies."
+
+Parag Vaze is a SWOT project manager at NASA's Jet Propulsion Laboratory in California. He said he hopes researchers, policymakers and water resource managers around the world will examine the data collected by SWOT.
+
+"(The satellite) took years to develop and build," Vaze said, "and it will collect information on bodies of water across the globe – data that will be freely and openly available to everybody who needs it."
+
+I'm Bryan Lynn.
+
+The United States gets hit by some of the strongest and most destructive storms on Earth.
+
+Examples of extreme weather include hurricanes, tornadoes, floods and droughts.
+
+But the storms themselves are not the only problem. Weather experts say human choices about where and what to build are making the situation much worse.
+
+A home sits in rising floodwaters after a levee break caused extensive flooding around Corcoran, Calif., on Tuesday, March 21, 2023. (Carlos Avila Gonzalez/San Francisco Chronicle via AP, File)
+A home sits in rising floodwaters after a levee break caused extensive flooding around Corcoran, Calif., on Tuesday, March 21, 2023. (Carlos Avila Gonzalez/San Francisco Chronicle via AP, File)
+Rick Spinrad heads the U.S. National Oceanic and Atmospheric Administration. He told The Associated Press that "more extreme" weather events are expected to keep happening across the U.S. in coming years. International weather officials have partly blamed climate change for causing more severe storms.
+
+Kathie Dello is a climatologist with the state of North Carolina. She told The Associated Press the main reason the U.S. gets many intense and destructive storms is because of geography. "It's truly a little bit ... unlucky," Dello said.
+
+Susan Cutter is a geography professor at the University of South Carolina. She said a country like China has more people and land area than the United States. But, she added, "They don't have the same kind of clash of air masses as much as you do in the U.S. that is producing a lot of the severe weather."
+
+The U.S. experiences by far more tornadoes and other severe storms than other countries, said Victor Gensini. He is a weather expert and professor at Northern Illinois University.
+
+Gensini described a repeating weather pattern that leads to many strong U.S. storms. The pattern involves dry air from the western U.S. moving up over the Rocky Mountains. There, it crashes into warm, wetter air from the Gulf of Mexico.
+
+Overall, the U.S. South experiences more severe weather than other parts of the country, said Marshall Shepherd. He is a former president of the American Meteorological Society.
+
+Shepherd told the AP that areas in the South "can experience every single type of extreme weather event." These include wildfires, tornadoes, floods and hurricanes. "There's no other place in the United States that can say that," Shepherd said.
+
+In the West, people face wildfires as well as a severe weather event known as an atmospheric river. Atmospheric rivers are long and wide areas of water vapor that form over an ocean. When atmospheric rivers reach land, they often release the water vapor in the form of rain or snow.
+
+The U.S. Northeast experiences severe storms in the winter and hurricanes in the summer. Sometimes it experiences an unusual combination of both. "It is a reality that regardless of where you are in the country, where you call home, you've likely experienced a high-impact weather event..." Spinrad said.
+
+But weather experts say even though geography puts Americans in the path of numerous intense storms, human activity can make the storms more destructive. One of the main problems is when communities permit development in areas with a high risk for storms and flooding.
+
+In some cases, the experts say building standards have gone down in recent years, putting more structures at risk during severe storms, Shepherd said. In addition, poverty can make it difficult for people to prepare for and recover from disasters. This is also true for people in many other places of the world.
+
+"Safety can be bought," noted Walker Ashley, a meteorology professor at Northern Illinois University. "Those that are well-to-do and who have resources can buy safety and will be the most resilient when disaster strikes," Ashley said.
+
+He added, "Unfortunately that isn't all of us."
+
+I'm Bryan Lynn.
+
+The Associated Press reported this story. Bryan Lynn adapted the report for VOA Learning English.

@@ -13,14 +13,14 @@
  * 其实就是不断从数组剩余元素中取最大的，从数组末尾自右向左依次排列。
  */
 
-import { Heap } from '../data-structure/heap'
+import { Heap, Value } from '../data-structure/heap'
 
 class SortHeap extends Heap {
     /**
      * 执行堆排序
      */
     public sort() {
-        let tmp: number
+        let tmp: Value
         while (this._size > 1) {
             // 将堆顶和堆尾元素交换
             tmp = this.data[1]
@@ -39,8 +39,8 @@ class SortHeap extends Heap {
     }
 }
 
-function heapSort(arr: number[]) {
+function heapSort(arr: Value[]) {
     (new SortHeap(arr, true)).sort()
 }
 
-export { heapSort }
+export { heapSort, Value }
