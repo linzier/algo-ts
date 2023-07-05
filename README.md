@@ -39,6 +39,7 @@ TypeScript 语言实现的算法集。
 - [二叉搜索树（递归法实现）](./src/data-structure/bin-search-tree2.ts)
 - [二分搜索](./src/data-structure/bin-search.ts)
 - [红黑树](./src/data-structure/red-black-tree.ts)
+- [跳表](./src/data-structure/skiplist.ts)
 
 ### 排序：
 - [插入排序](./src/sort/insert-sort.ts)

@@ -1,0 +1,20 @@
+{
+	"editor.tabSize": 4,
+	//关闭vscode自带代码修复，避免与ESlint冲突
+	"editor.formatOnSave": false,
+	// 启用ESlint作为格式化工具
+	"eslint.format.enable": true,
+	"eslint.run": "onType",
+	//配置 ESLint 检查的文件类型
+	"eslint.validate": [
+		"javascript",
+		"typescript",
+	],
+	"eslint.options": {
+		"extensions": [".js", ".ts"]
+	},
+	//代码保存时，自动执行ESlint格式化代码
+	"editor.codeActionsOnSave": {
+		"source.fixAll": true
+	}
+}
