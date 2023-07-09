@@ -27,6 +27,10 @@ class SkipListTest extends SkipList {
             }
         }
     }
+
+    public tailNode() {
+        return this.tail
+    }
 }
 
 describe('skipList', () => {
@@ -45,6 +49,7 @@ describe('skipList', () => {
         const list = new SkipListTest()
 
         assert.equal(list.size(), 0)
+        assert.equal(list.tailNode(), null)
 
         for (const d of data) {
             list.insert(d[0], d[1])
@@ -52,6 +57,7 @@ describe('skipList', () => {
 
         assert.equal(list.size(), data.length)
         assert.equal(list.search(5), 6170)
+        assert.ok(list.tailNode() && list.tailNode().val === list.search(n - 1))
 
         list.printLevel()
 
@@ -81,6 +87,7 @@ describe('skipList', () => {
 
         assert.equal(list.size(), 0)
         assert.equal(list.getLevel(), 0)
+        assert.equal(list.tailNode(), null)
 
         // 再执行一次
         n = 40000
@@ -94,6 +101,7 @@ describe('skipList', () => {
 
         assert.equal(list.size(), data2.length)
         assert.equal(list.search(5), 555)
+        assert.ok(list.tailNode() && list.tailNode().val === list.search(n - 1))
 
         for (const d of data2) {
             list.delete(d[0])

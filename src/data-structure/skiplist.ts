@@ -80,7 +80,12 @@ class SkipList {
         // 计算新节点的索引层数
         const level = this.randomLevel()
 
-        // 先处理 prev 指针
+        // 处理 tail 指针
+        if (!this.tail || this.tail === prev) {
+            this.tail = newNode
+        }
+
+        // 处理 prev 指针
         if (prev !== this.head) {
             // 将 newNode 的 prev 指针指向 node（前提是 node != head，我们不让 prev 指向 head 哨兵）
             newNode.prev = prev
@@ -114,13 +119,19 @@ class SkipList {
     public delete(key: number) {
         // 获取搜索路径上的各层前驱节点
         const prevNodes = this.searchPrevNodes(key)
+        // 待删除的节点就是第一层前驱节点的该层 next 指针所指向的节点
         const current = prevNodes[0].nexts[0]
 
         if (!current || current.key !== key) {
             return
         }
 
-        // 先处理 prev 指针
+        // 处理 tail 指针
+        if (this.tail === current) {
+            this.tail = current.prev
+        }
+
+        // 处理 prev 指针
         if (current.nexts[0]) {
             current.nexts[0].prev = current.prev
         }
