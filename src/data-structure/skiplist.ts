@@ -5,6 +5,8 @@
  *  1. 实现简单；
  *  2. 范围查询更加友好；
  * 
+ * 跳表详细介绍文档：https://mp.weixin.qq.com/s/HoEfIy2jZbhNsXY99Bm1LA
+ * 
  * 为简单起见，我们限制 key 是 number 类型，且假设节点关键字是不会重复的（插入的时候如果重复则覆盖）。
  */
 
