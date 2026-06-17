@@ -1,73 +1,73 @@
-TypeScript 语言实现的算法集。
+Algorithm collection implemented in TypeScript.
 
-第一期目标：实现《算法导论》中的全部算法。
+Phase 1 goal: Implement all algorithms from "Introduction to Algorithms".
 
-### 环境：
-1. 下载并安装 [node.js](https://nodejs.org/en/download/)；
-2. 全局安装 TypeScript: `npm i -g typescript`；
-3. 全局安装 ts-node: `npm i -g ts-node`；
-4. 下载本项目：`git clone https://github.com/linzier/algo-ts.git`；
-5. 进入项目根目录并安装依赖：`cd $proj_dir && npm i`；
-6. 运行某个算法的单元测试：`npm run test test/sort/insert-sort.test.ts`；
-7. 或者运行所有的单元测试：`npm run test:all`；
-8. 单元测试覆盖率：`npm run cover`；
+### Environment:
+1. Download and install [node.js](https://nodejs.org/en/download/);
+2. Install TypeScript globally: `npm i -g typescript`;
+3. Install ts-node globally: `npm i -g ts-node`;
+4. Clone this project: `git clone https://github.com/linzier/algo-ts.git`;
+5. Enter the project root directory and install dependencies: `cd $proj_dir && npm i`;
+6. Run unit tests for a specific algorithm: `npm run test test/sort/insert-sort.test.ts`;
+7. Or run all unit tests: `npm run test:all`;
+8. Unit test coverage: `npm run cover`;
 
-### 开发指南：
-- src 目录：存放源码，视情况划分二级目录；
-- test 目录：单元测试目录，目录结构同 src；
-- 为了让不太熟悉 TypeScript 的同学也能容易看懂算法实现代码，本项目在代码编写上尽量不使用复杂的语法（如大部分时候直接使用基本数据类型，而不是泛型），让大家在阅读代码时将注意力集中在算法实现本身，而不是语言特定语法中；
-- 注释：为便于阅读，代码尽可能包含详尽的注释。一般一个文件就是一个特定算法实现，在该文件顶部会包含一段注释，说明算法名称、说明、算法实现思路。另外大部分函数以及函数内部也都会包含详细的注释说明算法实现逻辑；
-- 目录与索引：
-  - 每个算法都需要加入到下方索引中，方便检阅；
-  - 一个算法可能属于多个索引分类，如归并算法同时属于“排序”和“分治算法”；
-  - 一般情况下，src 下的目录和索引是对应的，不过对于可归入多个索引分类的算法，在 src 下放入到其中一个目录即可。另外一些不好划分目录的直接放在 src 一级目录下；
+### Development guide:
+- src directory: Source code, organized into subdirectories as needed;
+- test directory: Unit test directory, mirroring the src structure;
+- To make the algorithm implementation code easy to understand even for those not very familiar with TypeScript, this project avoids using complex syntax where possible (e.g., using basic data types instead of generics most of the time), so that readers can focus on the algorithm implementation itself rather than language-specific syntax;
+- Comments: For ease of reading, the code includes detailed comments wherever possible. Generally, each file contains a specific algorithm implementation, with a comment block at the top describing the algorithm name, explanation, and implementation approach. Additionally, most functions and their internal logic include detailed comments explaining the implementation;
+- Directory and index:
+  - Each algorithm must be added to the index below for easy reference;
+  - An algorithm may belong to multiple index categories, e.g., merge sort belongs to both "Sorting" and "Divide and Conquer";
+  - Generally, directories under src correspond to index categories. For algorithms that belong to multiple categories, they are placed in one directory under src. Some algorithms that are hard to categorize are placed directly in the src root directory;
 
-**相关算法和数据结构持续更新中，欢迎参与。**
+**Related algorithms and data structures are being continuously updated. Contributions are welcome.**
 
-索引
+Index
 ------
 
-### 数据结构:
-- [堆](./src/data-structure/heap.ts)
-- [优先队列](./src/data-structure/priority-queue.ts)
-- [链表](./src/data-structure/link.ts)
-- [栈](./src/data-structure/stack.ts)
-- [队列、循环队列](./src/data-structure/queue.ts)
-- [散列表（链表法）](./src/data-structure/hashtable1.ts)
-- [散列表（开放寻址法）](./src/data-structure/hashtable2.ts)
-- [二叉搜索树（非递归法实现）](./src/data-structure/bin-search-tree.ts)
-- [二叉搜索树（递归法实现）](./src/data-structure/bin-search-tree2.ts)
-- [二分搜索](./src/data-structure/bin-search.ts)
-- [红黑树](./src/data-structure/red-black-tree.ts)
-- [跳表](./src/data-structure/skiplist.ts)
+### Data Structures:
+- [Heap](./src/data-structure/heap.ts)
+- [Priority Queue](./src/data-structure/priority-queue.ts)
+- [Linked List](./src/data-structure/link.ts)
+- [Stack](./src/data-structure/stack.ts)
+- [Queue, Circular Queue](./src/data-structure/queue.ts)
+- [Hash Table (Chaining)](./src/data-structure/hashtable1.ts)
+- [Hash Table (Open Addressing)](./src/data-structure/hashtable2.ts)
+- [Binary Search Tree (Iterative)](./src/data-structure/bin-search-tree.ts)
+- [Binary Search Tree (Recursive)](./src/data-structure/bin-search-tree2.ts)
+- [Binary Search](./src/data-structure/bin-search.ts)
+- [Red-Black Tree](./src/data-structure/red-black-tree.ts)
+- [Skip List](./src/data-structure/skiplist.ts)
 
-### 排序：
-- [插入排序](./src/sort/insert-sort.ts)
-- [选择排序](./src/sort/select-sort.ts)
-- [归并排序](./src/sort/merge-sort.ts)
-- [堆排序](./src/sort/heap-sort.ts)
-- [快速排序](./src/sort/quick-sort.ts)
-- [计数排序](./src/sort/count-sort.ts)
-- [基数排序](./src/sort/radix-sort.ts)
-- [桶排序](./src/sort/bucket-sort.ts)
-- [中位数和顺序统计量](./src/sort/order-statistic.ts)
+### Sorting:
+- [Insertion Sort](./src/sort/insert-sort.ts)
+- [Selection Sort](./src/sort/select-sort.ts)
+- [Merge Sort](./src/sort/merge-sort.ts)
+- [Heap Sort](./src/sort/heap-sort.ts)
+- [Quick Sort](./src/sort/quick-sort.ts)
+- [Counting Sort](./src/sort/count-sort.ts)
+- [Radix Sort](./src/sort/radix-sort.ts)
+- [Bucket Sort](./src/sort/bucket-sort.ts)
+- [Medians and Order Statistics](./src/sort/order-statistic.ts)
 
-### 动态规划：
-- [最大子数组（O(n)复杂度解法）](./src/dp/maximum-subarray.ts)
-- [最长公共子序列](./src/dp/longest-common-subsequence.ts)
-- [数字三角形](./src/dp/number-triangle.ts)
-- [最长回文子序列](./src/dp/longest-palindrome-subseq.ts)
-- [最小编辑距离](./src/dp/min-edit-distance.ts)
-- [0/1 背包](./src/dp/0-1-knapsack.ts)
-- [完全背包](./src/dp/complete-knapsack.ts)
-- [多重背包](./src/dp/multi-knapsack.ts)
+### Dynamic Programming:
+- [Maximum Subarray (O(n) solution)](./src/dp/maximum-subarray.ts)
+- [Longest Common Subsequence](./src/dp/longest-common-subsequence.ts)
+- [Number Triangle](./src/dp/number-triangle.ts)
+- [Longest Palindromic Subsequence](./src/dp/longest-palindrome-subseq.ts)
+- [Minimum Edit Distance](./src/dp/min-edit-distance.ts)
+- [0/1 Knapsack](./src/dp/0-1-knapsack.ts)
+- [Complete Knapsack](./src/dp/complete-knapsack.ts)
+- [Multi Knapsack](./src/dp/multi-knapsack.ts)
 
-### 贪心算法：
-- [活动选择问题](./src/greedy/activity-select.ts)
-- [哈夫曼编码](./src/greedy/huffman-code.ts)
+### Greedy Algorithms:
+- [Activity Selection](./src/greedy/activity-select.ts)
+- [Huffman Coding](./src/greedy/huffman-code.ts)
 
-### 分治算法：
-- [归并排序](./src/sort/merge-sort.ts)
-- [快速排序](./src/sort/quick-sort.ts)
-- [逆序对](./src/divide-and-conquer/inversion-pair.ts)
-- [最大子数组（最大子序和）](./src/divide-and-conquer/maximum-subarray.ts)
+### Divide and Conquer:
+- [Merge Sort](./src/sort/merge-sort.ts)
+- [Quick Sort](./src/sort/quick-sort.ts)
+- [Inversion Pairs](./src/divide-and-conquer/inversion-pair.ts)
+- [Maximum Subarray (Maximum Subarray Sum)](./src/divide-and-conquer/maximum-subarray.ts)

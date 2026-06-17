@@ -4,7 +4,7 @@ import { countSort } from '../../src/sort/count-sort'
 
 describe('count sort', () => {
     it('should success for all array', () => {
-        // max 取 0 ~ 100，分别验证正确性
+        // Use max from 0 to 100, verify correctness for each
         for (let j = 0; j <= 5; j++) {
             const arrs = numberData(j)
 
@@ -12,7 +12,7 @@ describe('count sort', () => {
                 const arr = arrs[i]
                 countSort(arr, j)
     
-                // 排序后，j 大于等于 j - 1
+                // After sort, arr[j] >= arr[j-1]
                 for (let j = 1; j < arr.length; j++) {
                     assert.ok(arr[j] >= arr[j - 1], `arrs[${i}] fail,max val:${j}`)
                 }

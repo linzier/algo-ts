@@ -8,14 +8,14 @@ function commonAssertTree(tree: BinSearchTree, total: number) {
     assert.equal(tree.search(20), 20)
     assert.equal(tree.search(100), undefined)
     
-    // 中序
+    // inorder
     const inOrders4 = tree.inorderWalk()
     assert.equal(inOrders4.length, total)
     for (let i = 1; i < inOrders4.length; i++) {
         assert.ok(inOrders4[i - 1].key <= inOrders4[i].key)
     }
     
-    // 先序
+    // preorder
     const preOrders4 = tree.preorderWalk()
     assert.equal(tree.preorderWalk().length, total)
     const preArr4 = [9, 4, 2, 3, 6, 7, 17, 13, 15, 18, 20]
@@ -23,7 +23,7 @@ function commonAssertTree(tree: BinSearchTree, total: number) {
         assert.equal(preOrders4[i].key, preArr4[i])
     }
 
-    // 后序
+    // postorder
     const postOrders4 = tree.postorderWalk()
     assert.equal(postOrders4.length, total)
     const postArr4 = [3, 2, 7, 6, 4, 15, 13, 20, 18, 17, 9]
@@ -39,7 +39,7 @@ function commonAssertTree(tree: BinSearchTree, total: number) {
 
 describe('bin search tree', () => {
     it('build from orderd array', () => {
-        // 空树
+        // empty tree
         const tree1 = BinSearchTree.buildFromOrderdArray([])
         assert.equal(tree1.size(), 0)
         assert.equal(tree1.height(), 0)
@@ -52,7 +52,7 @@ describe('bin search tree', () => {
         assert.equal(tree1.successor(), null)
         assert.equal(tree1.predecessor(), null)
 
-        // 一个元素
+        // one element
         const tree2 = BinSearchTree.buildFromOrderdArray([{ key: 10, val: 10 }])
         assert.equal(tree2.size(), 1)
         assert.equal(tree2.height(), 0)
@@ -67,7 +67,7 @@ describe('bin search tree', () => {
         assert.equal(tree2.successor(), null)
         assert.equal(tree2.predecessor(), null)
 
-        // 两个元素
+        // two elements
         const tree3 = BinSearchTree.buildFromOrderdArray([{ key: 10, val: 10 }, { key: 20, val: 20 }])
         assert.equal(tree3.size(), 2)
         assert.equal(tree3.height(), 1)
@@ -85,7 +85,7 @@ describe('bin search tree', () => {
         assert.equal(tree3.successor().key, 20)
         assert.equal(tree3.predecessor(), null)
 
-        // 中序遍历 2, 3, 4, 6, 7, 9, 13, 15, 17, 18, 20
+        // In-order traversal 2, 3, 4, 6, 7, 9, 13, 15, 17, 18, 20
         const arr4 = [
             { key: 2, val: 2 },
             { key: 3, val: 3 },
@@ -157,7 +157,7 @@ describe('bin search tree', () => {
         assert.equal(tree.successor(node).key, 18)
         assert.equal(tree.predecessor(node).key, 15)
 
-        // 删除
+        // delete
         tree.delete(3)
         assert.equal(tree.size(), 10)
         assert.equal(tree.searchNode(3), null)

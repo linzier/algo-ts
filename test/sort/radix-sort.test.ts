@@ -32,7 +32,7 @@ describe('radix sort', () => {
             const arr = data[i]
             radixSort(arr, 9)
 
-            // 排序后，j 大于等于 j - 1
+            // After sort, arr[j] >= arr[j-1]
             for (let j = 1; j < arr.length; j++) {
                 assert.ok(arr[j] >= arr[j - 1], `arrs[${i}] fail,max val:${j}`)
             }

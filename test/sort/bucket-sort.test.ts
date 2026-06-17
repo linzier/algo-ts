@@ -19,7 +19,7 @@ describe('bucket sort', () => {
 
             assert.equal(data[i].length, len)
 
-            // 排序后，j 大于等于 j - 1
+            // After sort, arr[j] >= arr[j-1]
             for (let j = 1; j < data[i].length; j++) {
                 assert.ok(data[i][j] >= data[i][j - 1], `arrs[${i}] fail`)
             }

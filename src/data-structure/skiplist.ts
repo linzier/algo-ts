@@ -1,32 +1,32 @@
 /**
- * 跳表
- * 基于多层链表实现的平衡树，其查询、插入和更新的平均时间复杂度都是 O(lgn)。
- * 相较于红黑树等其他平衡树，有如下特点：
- *  1. 实现简单；
- *  2. 范围查询更加友好；
+ * Skip List
+ * A balanced tree based on multi-level linked lists，with average O(lgn) time complexity for search, insertion, and update.
+ * Compared to other balanced trees like red-black trees, it has the following characteristics:
+ *  1. Simple implementation;
+ *  2. More friendly range queries;
  * 
- * 跳表详细介绍文档：https://mp.weixin.qq.com/s/HoEfIy2jZbhNsXY99Bm1LA
+ * Skip List detailed introduction document: https://mp.weixin.qq.com/s/HoEfIy2jZbhNsXY99Bm1LA
  * 
- * 为简单起见，我们限制 key 是 number 类型，且假设节点关键字是不会重复的（插入的时候如果重复则覆盖）。
+ * For simplicity, we restrict key to number type and assume node keys are unique (duplicates are overwritten on insertion).
  */
 
 class SkipList {
-    // 跳表最大层数限制
+    // Skip List maximum level count limit
     protected static readonly MAX_LEVEL = 32
-    // 上层元素数是下层数量的 1/N（相当于 N 叉树）
+    // Upper level element count is 1/N of lower level (like an N-ary tree)
     protected static readonly N = 4
 
-    // 表头指针。为方便处理，表头不表示实际节点， 作为哨兵存在
+    // Head pointer. For convenience, the head is a sentinel, not a real node
     protected head: Node
-    // 表尾指针。空链表的时候指向 null
+    // Tail pointer. Points to null when list is empty
     protected tail: Node | null
-    // 跳表中元素个数
+    // Number of elements in Skip List
     protected length: number
-    // 跳表层数
+    // Skip Listlevel count
     protected level: number
     
     public constructor() {
-        // 创建表头
+        // Create head
         this.head = new Node(-Infinity, undefined)
         this.length = 0
         this.level = 0
@@ -37,7 +37,7 @@ class SkipList {
     }
 
     /**
-     * 根据 key 查找 value 并返回，如果没找到则返回 undefined
+     * Search for value by key, return undefined if not found
      * @param key
      */
     public search(key: number): unknown {
@@ -47,9 +47,9 @@ class SkipList {
 
         let node = this.head
 
-        // 从最高层开始往下搜索，直到搜到第一层
+        // Search from the highest level downward until reaching level 0
         for (let i = this.level - 1; i >= 0; i--) {
-            // 如果当前节点该层存在后继节点，且该后继节点的 key 小于等于 key，则跳到该后继节点
+            // If the current node has a successor at this level and its key <= key, jump to it
             while (node.nexts[i] && node.nexts[i].key <= key) {
                 node = node.nexts[i]
             }
@@ -59,50 +59,50 @@ class SkipList {
     }
 
     /**
-     * 将 { key, val } 插入到跳表中。如果已经存在则覆盖 val 的值
-     * @param key 
-     * @param val 
+     * Insert { key, val } into the Skip List. If it already exists, overwrite the val value
+     * @param key
+     * @param val
      */
     public insert(key: number, val: unknown) {
-        // 获取搜索路径上的各层前驱节点
+        // Get predecessor nodes at each level along the search path
         const prevNodes = this.searchPrevNodes(key)
-        // 第一层的前驱节点
+        // Level 0 predecessor node
         const prev = prevNodes[0]
 
-        // 取第一层前驱的 next，看看该值是不是 key
-        // 如果是 key Node，说明节点已经存在，覆盖 val 后结束
+        // Check the level 0 predecessor's next to see if it has the key
+        // If it is the key node, it already exists, overwrite val and return
         if (prev.nexts[0] && prev.nexts[0].key === key) {
             prev.nexts[0].val = val
             return
         }
 
-        // 待插入的节点是新节点，需插入节点并重建索引（可能）
+        // The node to insert is new, need to insert and rebuild indices (possibly)
         const newNode: Node = { key, val, prev: null, nexts: [] }
 
-        // 计算新节点的索引层数
+        // Calculate the index level count for the new node
         const level = this.randomLevel()
 
-        // 处理 tail 指针
+        // Handle tail pointer
         if (!this.tail || this.tail === prev) {
             this.tail = newNode
         }
 
-        // 处理 prev 指针
+        // Handle prev pointer
         if (prev !== this.head) {
-            // 将 newNode 的 prev 指针指向 node（前提是 node != head，我们不让 prev 指向 head 哨兵）
+            // Point newNode's prev to node (provided node != head, we don't let prev point to the head sentinel)
             newNode.prev = prev
         }
         if (prev.nexts[0]) {
             prev.nexts[0].prev = newNode
         }
 
-        // 逐层处理 next 指针
+        // Process next pointers level by level
         for (let i = 0; i < level; i++) {
-            // prevNodes 里面仅有原先 this.level 层的最右 node，而新 level 可能高于原 level，
-            // 该情况下，超出的层在 prevNodes 里面没有对应节点，则直接取 head
+            // prevNodes only contains the rightmost nodes at the original this.level levels, while the new level may be higher than the original,
+            // in which case the extra levels have no corresponding node in prevNodes, so use head directly
             const leftNode = prevNodes[i] ?? this.head
 
-            // 变更 next 指针
+            // Update next pointer
             newNode.nexts[i] = leftNode.nexts[i]
             leftNode.nexts[i] = newNode
         }
@@ -115,36 +115,36 @@ class SkipList {
     }
 
     /**
-     * 删除节点
+     * Delete node
      * @param key
      */
     public delete(key: number) {
-        // 获取搜索路径上的各层前驱节点
+        // Get predecessor nodes at each level along the search path
         const prevNodes = this.searchPrevNodes(key)
-        // 待删除的节点就是第一层前驱节点的该层 next 指针所指向的节点
+        // The node to delete is the one pointed to by the level 0 predecessor's next pointer
         const current = prevNodes[0].nexts[0]
 
         if (!current || current.key !== key) {
             return
         }
 
-        // 处理 tail 指针
+        // Handle tail pointer
         if (this.tail === current) {
             this.tail = current.prev
         }
 
-        // 处理 prev 指针
+        // Handle prev pointer
         if (current.nexts[0]) {
             current.nexts[0].prev = current.prev
         }
         current.prev = null
 
-        // 处理各层的 next 指针
+        // Process next pointers at each level
         for (let i = 0; i < current.nexts.length; i++) {
             prevNodes[i].nexts[i] = current.nexts[i]
             current.nexts[i] = null
 
-            // 如果该层的前驱节点是 head，且调整后其 next 指向 null/undefined，说明该层不再有有效节点，需要将层数减 1
+            // If the predecessor at this level is head and its next points to null/undefined after adjustment, this level no longer has valid nodes, decrement level count
             if (!this.head.nexts[i]) {
                 this.level--
             }
@@ -154,29 +154,29 @@ class SkipList {
     }
 
     /**
-     * 搜索关键字 key，返回其搜索路径上经过的每层的前驱节点数组
-     * 即每层返回其左边相邻节点
-     * @param key - 关键字
-     * @returns 关键字 key 在每层的前驱节点数组
+     * Search for key, return an array of predecessor nodes at each level along the search path
+     * i.e., return the left adjacent node at each level
+     * @param key - the key
+     * @returns Array of predecessor nodes for key at each level
      */
     private searchPrevNodes(key: number): Node[] {
-        // 记录每层走到的最右边的位置（也就是目标节点的前驱节点）
+        // Record the rightmost position reached at each level (i.e., the predecessor of the target node)
         const prevNodes: Node[] = []
-        // 从 head 开始
+        // Start from head
         let node = this.head
 
-        // 从最上层开始往下找
+        // Search from the top level downward
         for (let i = this.level - 1; i >= 0; i--) {
-            // 如果当前节点该层存在后继节点，且该后继节点的 key 小于 key，则跳到该后继节点
+            // If the current node has a successor at this level with key < key, jump to it
             while (node.nexts[i] && node.nexts[i].key < key) {
                 node = node.nexts[i]
             }
 
-            // 下沉之前记录该节点作为本层访问到的最右节点
+            // Record this node as the rightmost node visited at this level before descending
             prevNodes[i] = node
         }
 
-        // 如果一个都没有（列表为空，this.level = 0 时），将 head 加入进去
+        // If none exist (empty list, when this.level = 0), add head
         if (!prevNodes.length) {
             prevNodes[0] = this.head
         }
@@ -185,8 +185,8 @@ class SkipList {
     }
 
     /**
-     * 随机生成 level 层数
-     * 从最底层开始，每增加一层的概率为 1/N
+     * Randomly generate the level count
+     * Starting from the bottom level, each additional level has probability 1/N
      */
     protected randomLevel(): number {
         let level = 1
@@ -200,18 +200,18 @@ class SkipList {
 }
 
 /**
- * 跳表节点
- * 双向链表节点，拥有 prev 和 next 指针
+ * Skip List node
+ * Doubly linked list node, has prev and next pointers
  */
 class Node {
-    // 关键字。根据 key 排序
-    // 为简单起见，我们假设节点关键字是不会重复的（插入的时候如果重复则覆盖）
+    // Key. Sorted by key
+    // For simplicity, we assume node keys are unique (duplicates are overwritten on insertion)
     public key: number
-    // 卫星数据
+    // Satellite data
     public val: unknown
-    // 该节点的前驱节点指针
+    // Pointer to this node's predecessor
     public prev: Node | null
-    // 该节点各层的后继节点指针数组
+    // Array of successor pointers at each level for this node
     public nexts: (Node | null)[]
 
     public constructor(key: number, val: unknown) {

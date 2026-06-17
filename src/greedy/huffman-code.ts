@@ -1,31 +1,34 @@
 /**
- * 哈夫曼编码以及利用哈夫曼编码压缩和解压数据。
- * 哈夫曼编码基于哈夫曼树。
- * 给定 N 个权值作为 N 个叶子结点，构造一棵二叉树，若该树的带权路径长度达到最小，称这样的二叉树为最优二叉树，也称为哈夫曼树(Huffman Tree)。
- * 哈夫曼树是带权路径长度最短的树，权值较大的结点离根较近。
- * 
- * 哈夫曼树的构建：
- * 基于贪心算法实现，可以借助最小优先队列。
- * 例：
- * 有文本字符串 T，其构成字符以及频率如下：
- * E:1, M:2, C:3, A:3, D:4。
- * 构造哈夫曼树的思路：
- * 1. 将所有字符各自作为独立的节点（相当于只有根的数），构成一个集合 S（或说森林）；
- * 2. 从 S 中取出频率最小的两个节点（本例是 E 和 M，取出的意味着同时从 S 中删除这两个节点），创建一个新节点 N，这两个节点分别作为 N 的左右子节点，
- *    N 的频率等于两个子节点频率之和（本例是 1 + 2 = 3);
- * 3. 将新节点 N 放入集合 S 中；
- * 4. 重复步骤 2、3，直到集合 S 中只有一个节点（即构成的整棵树的根）；
- *（贪心算法：每次总是从集合中取频率最小的两个元素，这种取法使得频率越大的越晚构建，也就离树根越近。）
- * 
- * 对于文本 T，构成哈夫曼树过程如下：
- * 1. 初始态，集合中元素：E(1), M(2), C(3), A(3), D(4)；
- * 2. 取 E(1)、M(2)，生成新节点 (3) 并放入集合中，集合中元素变为：(3), C(3), A(3), D(4)；
- * 3. 取 (3)、C(3)，生成新节点 (6) 并放入集合中，集合中元素变为：A(3), D(4), (6)；
- * 4. 取 A(3)、D(4)，生成新节点 (7) 并放入集合中，集合中元素变为：(6), (7)；
- * 5. 取 (6)、(7)，生成新节点 (13) 并放入集合中，集合中元素变为：(13)；
- * 6. 集合中只有一个 (13)，即整棵树的根；
- * 
- * 最终构成的树如下：
+ * Huffman Coding and using Huffman Coding to compress and decompress data.
+ * Huffman Coding is based on Huffman Tree.
+ * Given N weights as N leaf nodes, construct a binary tree. If the weighted path length of this tree reaches
+ * the minimum, such a binary tree is called an optimal binary tree, also called a Huffman Tree.
+ * Huffman Tree is the tree with the shortest weighted path length, where nodes with larger weights are closer to the root.
+ *
+ * Building Huffman Tree:
+ * Implemented based on greedy algorithm, can use a min priority queue.
+ * Example:
+ * Given text string T, its constituent characters and frequencies are as follows:
+ * E:1, M:2, C:3, A:3, D:4.
+ * Approach to construct Huffman Tree:
+ * 1. Treat all characters each as an independent node (equivalent to a tree with only a root), forming a set S (or forest);
+ * 2. Get the two nodes with minimum frequency from S (in this example E and M; getting them means simultaneously
+ *    removing them from S), create a new node N, with these two nodes as N's left and right children respectively.
+ *    N's frequency equals the sum of the two child nodes' frequencies (in this example 1 + 2 = 3);
+ * 3. Put new node N into set S;
+ * 4. Repeat steps 2, 3, until set S has only one node (i.e., the root of the constructed tree);
+ * (Greedy algorithm: each time always get the two elements with minimum frequency from the set. This approach makes
+ *  elements with higher frequency be built later, i.e., closer to the tree root.)
+ *
+ * For text T, the Huffman Tree construction process is as follows:
+ * 1. Initial state, set elements: E(1), M(2), C(3), A(3), D(4);
+ * 2. Get E(1), M(2), generate new node (3) and put into set, set elements become: (3), C(3), A(3), D(4);
+ * 3. Get (3), C(3), generate new node (6) and put into set, set elements become: A(3), D(4), (6);
+ * 4. Get A(3), D(4), generate new node (7) and put into set, set elements become: (6), (7);
+ * 5. Get (6), (7), generate new node (13) and put into set, set elements become: (13);
+ * 6. Set has only one (13), i.e., the root of the entire tree;
+ *
+ * The final constructed tree is as follows:
  *                                      (13)
  *                                  /          \
  *                               (6)           (7)
@@ -33,120 +36,123 @@
  *                           (3)     C(3)   A(3)  D(4)
  *                         /     \
  *                       E(1)    M(2)
- * 
- * 如上图，频率最低的字符 E 的路径最长，频率最高的 D 路径最短（路径：从根到该节点简单路径上边数量）。
- * 
- * 根据哈夫曼树生成哈夫曼编码：
- * 从根开始往下遍历每个叶节点，每经过左子节点取 0，经过右子节点则取 1。
+ *
+ * As shown, the character E with the lowest frequency has the longest path, and D with the highest frequency
+ * has the shortest path (path: number of edges on the simple path from root to this node).
+ *
+ * Generate Huffman Coding based on Huffman Tree:
+ * Starting from root, traverse each leaf node downward, getting 0 for each left child and 1 for each right child.
  * E: 000
  * M: 001
  * C: 01
  * A: 10
  * D: 11
- * 可见，频率最高的 D 和 A 转成哈夫曼编码后只占 2 个比特。
- * 
- * 编码（压缩）：
- * 压缩的本质是将字符原码替换成哈夫曼编码，由于哈夫曼编码中，频率越高的字符其编码占比特数越少，所以整体起到了压缩的作用。
- * 例如，按照上面的编码对字符串 DAM 执行编码：
- * 编码前二进制串：01000100 01000001 01001101，占 3 字节。
- * 编码后二进制串：1110001，占 1 字节。
- * 
- * 解码（解压）：
- * 先将编码表（即字符和哈夫曼编码之间的映射关系）转换为哈夫曼树，然后根据哈夫曼树来解码，具体参见代码实现。 
+ * As can be seen, the high-frequency D and A only occupy 2 bits after converting to Huffman Coding.
+ *
+ * Encoding (compress):
+ * The essence of compression is replacing character original codes with Huffman Coding. Since in Huffman Coding,
+ * higher frequency characters have shorter encoding bit counts, it plays a compression role overall.
+ * For example, encoding string DAM according to the above encoding:
+ * Binary string before encoding: 01000100 01000001 01001101, occupying 3 bytes.
+ * Binary string after encoding: 1110001, occupying 1 byte.
+ *
+ * Decoding (decompress):
+ * First convert the encoding table (i.e., the mapping between characters and Huffman Coding) into a Huffman Tree,
+ * then decode based on the Huffman Tree. See the code implementation for details.
  */
 
 import { MinPriorityQueue } from '../data-structure/priority-queue'
 
-// 哈夫曼树节点
+// Huffman Tree node
 interface Node {
-    // 字符
+    // Character
     char: number;
-    // 频率
+    // Frequency
     freq: number;
-    // 左节点
+    // Left node
     left: Node | null;
-    // 右节点
+    // Right node
     right: Node | null;
-    // 是否叶节点
+    // Whether it is a leaf node
     isLeaf: boolean;
 }
 
-// 哈夫曼编码
+// Huffman Coding
 interface HCode {
-    // 编码，用字节数组存放
-    // 对于 256 个字符（单字节最大数），编码最大长度为 255（频率取斐波那契数的情况）
-    // 所以创建一个 32 字节大小的 Buffer 存储（存储顺序：从左到右）
+    // Encoding, stored using byte array
+    // For 256 characters (max single byte count), the maximum encoding length is 255 (when frequency follows Fibonacci)
+    // Therefore create a 32-byte Buffer for storage (storage order: from left to right)
     buff: Buffer;
-    // 编码的确切长度（比特数）
+    // Exact encoding length (bit count)
     length: number;
-    // 频率
+    // Frequency
     freq: number;
 }
 
 /**
- * 哈夫曼编码
+ * Huffman Coding
  */
 class HuffmanEncoder {
     /**
-     * 压缩
-     * @param buf - 字节数组
-     * @returns 压缩后的字节数组
+     * Compress
+     * @param buf - Byte array
+     * @returns Compressed byte array
      */
     public encode(buf: Buffer): Buffer {
-        // 如果只有 21 个字节，不走压缩了，直接返回原串（因为元数据至少是 21 字节）
+        // If only 21 bytes or less, skip compression, directly return original string (because metadata is at least 21 bytes)
         if (buf.byteLength <= 21) {
             return buf
         }
 
-        // 计算每个字符的编码值
+        // Calculate each character's encoding value
         const hcodes = this.huffmanCode(buf)
 
-        // 计算编码后比特数
+        // Calculate total bit count after encoding
         let zipBitCnt = 0
         for (const code of hcodes.values()) {
             zipBitCnt += code.length * code.freq
         }
-        
-        // 元数据 Buffer
-        const metaBuff = this.metaData(hcodes, buf.byteLength,  zipBitCnt)
 
-        // zipBuff 中由元数据+压缩字符串两部分构成
+        // Metadata Buffer
+        const metaBuff = this.metaData(hcodes, buf.byteLength, zipBitCnt)
+
+        // zipBuff is composed of metadata + compressed string, two parts
         const metaLen = metaBuff.length
         const zipBuff = Buffer.alloc(metaLen + Math.ceil(zipBitCnt / 8))
 
-        // 将元数据拷贝到缓冲区
+        // Copy metadata to buffer
         zipBuff.set(metaBuff, 0)
 
-        // 当前处理到的 bit 位数，初始化为元数据的比特数
+        // Current bit position being processed, initialized to metadata's bit count
         let pos = metaLen << 3
 
-        // 逐字节压缩
-        // 所谓压缩，就是将原字节转换成哈夫曼编码（比特位）
+        // Compress byte by byte
+        // So-called compression is converting original bytes to Huffman Coding (bit positions)
         for (let i = 0; i < buf.length; i++) {
-            // 字符对应的哈夫曼编码
+            // Character's corresponding Huffman Coding
             const hcode = hcodes.get(buf[i])
-            // 哈夫曼编码比特存放在 Buffer 中
+            // Huffman Coding bits stored in Buffer
             const codeBuff = hcode.buff
 
-            // 逐比特转换
+            // Convert bit by bit
             for (let j = 0; j < hcode.length; j++) {
-                // 取哈夫曼编码（字节数组）中对应比特的值
-                // codeBuff[j >> 3] 定位到缓冲数组对应的字节
-                // j & 7 是字节内比特偏移值。对字节右移该偏移量将需要的比特移到最右边
-                // & 128 将该字节除了最右边以外的比特位全部变成 0
+                // Get the corresponding bit value from the Huffman Coding (byte array)
+                // codeBuff[j >> 3] locates the corresponding byte in the buffer array
+                // j & 7 is the bit offset within the byte. Right-shifting the byte by this offset moves the needed bit to the rightmost
+                // & 128 sets all bits except the rightmost to 0
                 const bit = (codeBuff[j >> 3] << (j & 7)) & 128
 
                 if (bit === 0) {
-                    // 因为 Buffer.alloc 函数会用 0 初始化 bit 位，所以这里无需处理了
+                    // Because Buffer.alloc function initializes bit positions with 0, no processing needed here
                     pos++
                     continue
                 }
 
-                // 计算压缩缓冲区的字节下标和字节内比特偏移量
-                const index = pos >> 3 
-                const offset = pos & 7 
+                // Calculate the byte index and bit offset within byte in the compress buffer
+                const index = pos >> 3
+                const offset = pos & 7
 
-                // 将相应比特位设置为 1
+                // Set the corresponding bit to 1
                 zipBuff[index] = zipBuff[index] | (1 << (7 - offset))
                 pos++
             }
@@ -156,15 +162,15 @@ class HuffmanEncoder {
     }
 
     /**
-     * 生成元数据
-     * 格式：原始字符串字节数(8 字节) + 压缩字符串字节数(8 字节) + 最后一字节有效比特数(1 字节) + 编码表字节数(即哈夫曼编码占用字节数，4 字节) + 编码表
-     * 编码表格式：字符(1 字节) + 编码比特数(1 字节) + 编码（至少 1 字节）
-     * @param hcodes - 哈夫曼编码
-     * @param origLen - 原始字符串字节数
-     * @param zipBitCnt - 编码后字符串比特数
+     * Generate metadata
+     * Format: original string byte count (8 bytes) + compressed string byte count (8 bytes) + last byte valid bit count (1 byte) + encoding table byte count (i.e., Huffman Coding byte count, 4 bytes) + encoding table
+     * Encoding table format: character (1 byte) + encoding bit count (1 byte) + encoding (at least 1 byte)
+     * @param hcodes - Huffman Coding
+     * @param origLen - Original string byte count
+     * @param zipBitCnt - Encoded string bit count
      */
     private metaData(hcodes: Map<number, HCode>, origLen: number, zipBitCnt: number): Buffer {
-        // 计算元数据总大小
+        // Calculate total metadata size
         let size = 21
         for (const hcode of hcodes.values()) {
             size += 2 + Math.ceil(hcode.length / 8)
@@ -173,31 +179,31 @@ class HuffmanEncoder {
         const buf = Buffer.alloc(size)
         let pos = 0
 
-        // 原始字符串字节数（8 字节）
+        // Original string byte count (8 bytes)
         buf.writeDoubleLE(origLen, pos)
         pos += 8
 
-        // 压缩字符串字节数(8 字节)
+        // Compressed string byte count (8 bytes)
         buf.writeDoubleLE(Math.ceil(zipBitCnt / 8), pos)
         pos += 8
 
-        // 最后一位有效比特数
+        // Last byte valid bit count
         buf.writeUInt8((zipBitCnt & 7) || 8, pos)
         pos++
 
-        // 编码表字节数（4 字节）
+        // Encoding table byte count (4 bytes)
         buf.writeUInt32LE(size - 21, pos)
         pos += 4
 
-        // 编码表
+        // Encoding table
         for (const [char, hcode] of hcodes) {
-            // 字符（1 字节）
+            // Character (1 byte)
             buf.writeUint8(char, pos++)
 
-            // 编码比特数（1 字节）
+            // Encoding bit count (1 byte)
             buf.writeUint8(hcode.length, pos++)
 
-            // 编码比特
+            // Encoding bits
             const byteLen = Math.ceil(hcode.length / 8)
             buf.set(Uint8Array.prototype.slice.call(hcode.buff, 0, byteLen), pos)
             pos += byteLen
@@ -207,19 +213,19 @@ class HuffmanEncoder {
     }
 
     /**
-     * 根据字符频率计算哈夫曼编码
-     * 基于最小优先队列生成
-     * @param freqs - 每个字符出现的频率，数组下标表示字符的码值
-     * @returns 字符 -> 编码
+     * Calculate Huffman Coding based on character frequency
+     * Generated based on min priority queue
+     * @param freqs - Frequency of each character, array index represents the character's code value
+     * @returns character -> encoding
      */
     private huffmanCode(buf: Buffer): Map<number, HCode> {
-        // 计算字符频率
+        // Calculate character frequency
         const freqs = this.calcFreqs(buf)
 
-        // 构建哈夫曼树
+        // Build Huffman Tree
         const htRoot = this.huffmanTree(freqs)
 
-        // 生成哈夫曼编码，格式：字符 -> 编码
+        // Generate Huffman Coding, format: character -> encoding
         const hcodes: Map<number, HCode> = new Map()
         this.tree2code(htRoot, '', hcodes)
 
@@ -227,10 +233,10 @@ class HuffmanEncoder {
     }
 
     /**
-     * 根据哈夫曼树构建哈夫曼编码
-     * @param root - 哈夫曼树
-     * @param tmpCode - 保存哈夫曼编码中间值
-     * @param map - 保存最终的哈夫曼编码
+     * Build Huffman Coding based on Huffman Tree
+     * @param root - Huffman Tree
+     * @param tmpCode - Preserve Huffman Coding intermediate value
+     * @param map - Preserve the final Huffman Coding
      */
     private tree2code(root: Node, tmpCode: string, map: Map<number, HCode>) {
         if (root.isLeaf) {
@@ -238,38 +244,38 @@ class HuffmanEncoder {
             return
         }
 
-        // 非叶节点，继续处理左右子节点
+        // Non-leaf node, continue processing left and right children
         this.tree2code(root.left, tmpCode + '0', map)
         this.tree2code(root.right, tmpCode + '1', map)
     }
 
     /**
-     * 二进制字符串转成 bit 位，返回 Buffer
-     * @param bitStr - 二进制字符串，如 "10010101010"
+     * Convert binary string to bits, return Buffer
+     * @param bitStr - Binary string, e.g., "10010101010"
      */
     private str2bits(bitStr: string): Buffer {
         const buff = Buffer.alloc(32)
-        // 将字符串转成比特
+        // Convert string to bits
         for (let i = 0; i < bitStr.length; i++) {
-            // 0 位不用处理（ Buffer 初始化就是 0）
+            // 0 bits don't need processing (Buffer is initialized to 0)
             if (bitStr[i] === '0') {
                 continue
             }
 
-            // 整除 8（i >> 3）得到数组下标；模 8（i & 7）得到字节内偏移量
-            // 由于是从左到右的，所以 1 要左移的位移量等于 7 - (i % 8)
-            buff[i >> 3] |=  1 << (7 - (i & 7))
+            // Integer divide by 8 (i >> 3) to get array index; modulo 8 (i & 7) to get byte-internal offset
+            // Since it's from left to right, the left shift amount for 1 equals 7 - (i % 8)
+            buff[i >> 3] |= 1 << (7 - (i & 7))
         }
 
         return buff
     }
 
     /**
-     * 基于最小优先队列构建哈夫曼树
-     * @param queue - 最小优先队列
+     * Build Huffman Tree based on min priority queue
+     * @param queue - Min priority queue
      */
     private huffmanTree(freqs: number[]): Node {
-        // 最小优先队列
+        // Min priority queue
         const queue = new MinPriorityQueue()
 
         for (let i = 0; i < freqs.length; i++) {
@@ -277,25 +283,25 @@ class HuffmanEncoder {
                 continue
             }
 
-            // 加入到优先队列中，以频率作为 key，Node 作为 val
+            // Add to priority queue, using frequency as key and Node as val
             queue.insert({
                 key: freqs[i],
                 val: { char: i, freq: freqs[i], left: null, right: null, isLeaf: true }
             })
         }
 
-        // 自叶子节点向上处理，直到队列中只有一个节点，该节点就是根节点
-        // 共执行 queue.size - 1 次
+        // Process from leaf nodes upward, until queue has only one node, this node is the root
+        // Total executions: queue.size - 1 times
         const qlen = queue.size()
         for (let i = 0; i < qlen - 1; i++) {
-            // 取频率最小的两个元素
+            // Get two elements with minimum frequency
             const left = queue.extract().val as Node
             const right = queue.extract().val as Node
 
-            // 创建新节点（父节点），其 char 随便填
+            // Create new node (parent node), its char can be anything
             const parent = { char: 0, freq: left.freq + right.freq, left, right, isLeaf: false }
 
-            // 将父节点放入队列中
+            // Put parent node into Queue
             queue.insert({ key: parent.freq, val: parent })
         }
 
@@ -303,13 +309,13 @@ class HuffmanEncoder {
     }
 
     /**
-     * 计算文本中每个字符出现的频率
-     * @param buf - 字节数组
+     * Calculate the frequency of each character in the text
+     * @param buf - Byte array
      */
     private calcFreqs(buf: Buffer): number[] {
-        // 用于记录每个字节出现的频率。单字节范围：0 ~ 255。初始化为 0
+        // Used to record frequency of each byte. Single byte range: 0 ~ 255. Initialized to 0
         const freqs: number[] = new Array(256).fill(0)
-        
+
         for (let i = 0; i < buf.length; i++) {
             freqs[buf[i]]++
         }
@@ -319,69 +325,69 @@ class HuffmanEncoder {
 }
 
 /**
- * 哈夫曼解码
- * 将编码转成哈夫曼树，根据哈夫曼树来解码字符串
+ * Huffman Decoding
+ * Convert encoding into Huffman Tree, decode string based on Huffman Tree
  */
 class HuffmanDecoder {
     public decode(buf: Buffer): Buffer {
-        // 如果只有 21 个字节，直接返回原串
+        // If only 21 bytes or less, directly return original string
         if (buf.byteLength <= 21) {
             return buf
         }
 
-        // 提取编码表（哈夫曼树）
+        // Extract encoding table (Huffman Tree)
         const htree = this.buildHuffmanTree(buf)
 
-        // 解码
+        // Decode
         return this.unzip(buf, htree)
     }
 
     /**
-     * 根据哈夫曼树解压 buf，返回解码后字节数组
-     * @param buf - 压缩后的字节数组
-     * @param tree - 哈夫曼树
+     * Decompress buf based on Huffman Tree, return decoded byte array
+     * @param buf - Compressed byte array
+     * @param tree - Huffman Tree
      */
     private unzip(buf: Buffer, tree: Node): Buffer {
         let pos = 0
         const bufLen = buf.byteLength
 
-        // 原始字符串字节数
+        // Original string byte count
         const origLen = Math.round(buf.readDoubleLE(pos))
         pos += 8
-        // 压缩后字符串字节数
+        // Compressed string byte count
         const zipLen = Math.round(buf.readDoubleLE(pos))
         pos += 8
-        // 最后一字节有效比特数
+        // Last byte valid bit count
         const lastBitCnt = buf.readUInt8(pos)
         pos++
 
-        // pos 偏移到压缩字符串第一个字节
+        // pos offset to the first byte of compressed string
         pos = bufLen - zipLen
 
-        // 存储解压后数据的 Buffer
+        // Buffer to store decompressed data
         const unzipBuf = Buffer.alloc(origLen)
-        // 指向 unzipBuf 中第一个空位
+        // Points to first empty position in unzipBuf
         let curr = 0
 
-        // 节点指针初始化为根节点
+        // Node pointer initialized to root node
         let nodePt = tree
 
-        // 解压
+        // Decompress
         while (pos < bufLen) {
             const byte = buf[pos]
-            // 当前字节有效比特数：如果不是最后一个字节则取 8，否则取 lastBitCnt
+            // Current byte valid bit count: if not last byte then get 8, otherwise get lastBitCnt
             const bitcnt = pos < bufLen - 1 ? 8 : lastBitCnt
 
-            // 对当前字节逐比特处理
+            // Process current byte bit by bit
             let i = 0
             while (i < bitcnt) {
-                // 当前比特为 1 则取右节点，否则取左节点
+                // If current bit is 1 then get right node, otherwise get left node
                 nodePt = (128 >> i) & byte ? nodePt.right : nodePt.left
 
                 if (nodePt.isLeaf) {
-                    // 找到字符了
+                    // Found character
                     unzipBuf[curr++] = nodePt.char
-                    // 重置 nodePt，匹配下一个字符
+                    // Reset nodePt, match next character
                     nodePt = tree
                 }
 
@@ -395,58 +401,58 @@ class HuffmanDecoder {
     }
 
     /**
-     * 从压缩字节中提取编码表并根据编码表生成哈夫曼树
-     * 元数据格式：原始字符串字节数(8 字节) + 压缩字符串字节数(8 字节) + 最后一字节有效比特数(1 字节) + 编码表字节数(即哈夫曼编码占用字节数，4 字节) + 编码表
-     * 编码表格式：字符(1 字节) + 编码比特数(1 字节) + 编码（至少 1 字节）
-     * @param buf - 压缩后字节数组
-     * @returns 哈夫曼树根节点
+     * Extract encoding table from compressed bytes and generate Huffman Tree based on it
+     * Metadata format: original string byte count (8 bytes) + compressed string byte count (8 bytes) + last byte valid bit count (1 byte) + encoding table byte count (i.e., Huffman Coding byte count, 4 bytes) + encoding table
+     * Encoding table format: character (1 byte) + encoding bit count (1 byte) + encoding (at least 1 byte)
+     * @param buf - Compressed byte array
+     * @returns Huffman Tree root node
      */
     private buildHuffmanTree(buf: Buffer): Node {
-        // 跳过 17 个字节
+        // Skip 17 bytes
         let pos = 17
 
-        // 编码表字节数
+        // Encoding table byte count
         const tableSize = buf.readUInt32LE(pos)
         pos += 4
 
-        // 读取并生成哈夫曼树（不用管频率）
-        // 初始化根节点
+        // Read and generate Huffman Tree (don't need frequency)
+        // Initialize root node
         const root: Node = { char: 0, freq: 0, left: null, right: null, isLeaf: false }
-        // 编码字节右边界
+        // Encoding byte right boundary
         const last = pos + tableSize
         while (pos < last) {
-            // 字符（1 字节）
+            // Character (1 byte)
             const char = buf.readUInt8(pos++)
-            // 编码比特数（1 字节）
+            // Encoding bit count (1 byte)
             let bitcnt = buf.readUInt8(pos++)
-            // 节点指针，初始化指向 root
+            // Node pointer, initialized pointing to root
             let currNode = root
 
-            // 根据编码比特生成树
-            // 逐字节处理
+            // Generate tree based on encoding bits
+            // Process byte by byte
             while (bitcnt > 0) {
-                // 本次要处理的比特数
+                // Bit count to process in this iteration
                 let n = bitcnt > 8 ? 8 : bitcnt
                 const byte = buf[pos]
-                // 将从左到右第 n 为设置为 1 ，方便下面运算
+                // Set the leftmost n-th bit to 1, convenient for following operations
                 const mask = 128 >> (n - 1)
-                // 逐比特处理
+                // Process bit by bit
                 while (n-- > 0) {
-                    // 逐比特判断并生成树节点
-                    // 自左向右处理
+                    // Check bit by bit and generate tree nodes
+                    // Process from left to right
                     const bit = (mask << n) & byte
 
                     let node = bit && currNode.right || !bit && currNode.left
                     if (node) {
-                        // 对应的节点已经存在了，则无需创建
+                        // Corresponding node already exists, no need to create
                         currNode = node
                         continue
                     }
 
-                    // 创建新节点
+                    // Create new node
                     node = { char: 0, freq: 0, left: null, right: null, isLeaf: false }
-                    // 叶节点特殊处理
-                    // 叶节点判断条件：当前是最后一个字节，且处理到最后一个比特
+                    // Special handling for leaf node
+                    // Leaf node check condition: current is the last byte, and processed to the last bit
                     if (n == 0 && bitcnt <= 8) {
                         node.char = char
                         node.isLeaf = true
@@ -454,13 +460,13 @@ class HuffmanDecoder {
 
                     bit ? currNode.right = node : currNode.left = node
 
-                    // 将 curr 指针指向当前节点
+                    // Point curr pointer to current node
                     currNode = node
                 }
 
-                // 剩余待处理比特数减 8
+                // Remaining bit count to process decreases by 8
                 bitcnt -= 8
-                // buf 向后移动 1 字节
+                // buf moves forward 1 byte
                 pos++
             }
         }

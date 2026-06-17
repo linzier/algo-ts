@@ -1,58 +1,65 @@
 /**
- * 最小编辑距离
- * 给你两个字符串 s1 和 s2，返回将 s1 转换成 s2 所使用的最少操作数。
- * 可以对一个单词进行如下三种操作：
- *  插入一个字符
- *  删除一个字符
- *  替换一个字符
- * 
- * 如：
- * 输入：s1 = "horse", s2 = "ros"
- * 输出：3
- * 解释：
- * horse -> rorse (将 'h' 替换为 'r')
- * rorse -> rose (删除 'r')
- * rose -> ros (删除 'e')
- * 
- * 解题思路：
- * 要求解两个字符串 s1 -> s2 的编辑距离，很自然的划分子问题的想法是取 s1[0:i] 和 s2[0:j] 两个子串，考察是否存在最优子结构。
- * 假设已经知道 s1[0:i-1] -> s2[0:j-1] 的最小编辑距离是 x，现在考察加上 s1[i] 和 s2[j] 的情况（即考察 s1[0:i] -> s2[0:j] 的最小编辑距离 y）。
- * 1. 当 s1[i] = s2[j]，此时无需做任何操作，y = x；
- * 2. 当 s1[i] != s2[j]，此时有三种操作方式：
- *  2.1 删除 s1[i]，然后拿 s1[i+1] 和 s2[j] 比较；
- *  2.2 插入 s2[j]，然后拿s1[i] 和 s2[j+1] 比较；
- *  2.3 将 s1[i] 改成 s2[j]，然后拿 s1[i+1] 和 s2[j+1] 比较；
- * 
- * 说明：
- * 上述操作直接用 s1 和 s2 理解不太直观，可以引入第三个中间数组来理解。
- * 起始：引入中间数组 arr = []，用来存放编辑后的字符。
+ * Minimum Edit Distance
+ * Given two strings s1 and s2, return the minimum number of operations to convert s1 into s2.
+ * Three operations can be performed on a word:
+ *  Insert a character
+ *  Delete a character
+ *  Replace a character
+ *
+ * Example:
+ * Input: s1 = "horse", s2 = "ros"
+ * Output: 3
+ * Explanation:
+ * horse -> rorse (replace 'h' with 'r')
+ * rorse -> rose (delete 'r')
+ * rose -> ros (delete 'e')
+ *
+ * Solution approach:
+ * To find the edit distance between two strings s1 -> s2, a natural subproblem decomposition idea is to take
+ * substrings s1[0:i] and s2[0:j], and examine whether optimal substructure exists.
+ * Assume we already know the minimum edit distance from s1[0:i-1] to s2[0:j-1] is x, now examine the case
+ * of adding s1[i] and s2[j] (i.e., examine the minimum edit distance y from s1[0:i] to s2[0:j]).
+ * 1. When s1[i] = s2[j], no operation is needed at this time, y = x;
+ * 2. When s1[i] != s2[j], there are three operation methods:
+ *  2.1 Delete s1[i], then compare s1[i+1] with s2[j];
+ *  2.2 Insert s2[j], then compare s1[i] with s2[j+1];
+ *  2.3 Change s1[i] to s2[j], then compare s1[i+1] with s2[j+1];
+ *
+ * Explanation:
+ * The above operations are not very intuitive when understood directly using s1 and s2, so we can introduce
+ * a third intermediate array for understanding.
+ * Initial: Introduce intermediate array arr = [], used to store edited characters.
  * s1 = a1,a2,...,ai-1,ai,...,an
  * s2 = b1,b2,...,bj-1,bj,...,bm
- * 考察完 s1[0:i-1] -> s2[0:j-1] 后，arr = [c1,c2,...,ck]。
- * 现在考察 i,j 位置。
- * 1. 如果 s1[i] = s2[j]，则直接将 s1[i]（或者 s2[j]）字符复制到 arr 中即可（假设复制的代价是 0），然后双方都往后移动一位，继续
- *    考察 s1[i+1] 和 s2[j+1]；
- * 2. 如果 s1[i] != s2[j]，则有删除、插入、替换三种操作方式：
- *  2.1 删除：相当于 s1 这个位置多了 ai 字符，我们删除掉 ai 字符，问题得以解决，s1 往后移动一位，来到 s1[i+1]。此时不会往 arr 中写入字符（也就是不要这个字符），
- *      由于没有动 s2 中的任何字符，s2 还在 j 位置，接下来将比较 s1[i+1] 和 s[j]（也就是考察 s1[0:i+1] -> s2[j] 的最小编辑距离）；
- *  2.2 插入：相当于 s1 目前位置缺少了 s2[j] 这个字符，我们给它插入进去，让插入的这个字符对应 s2[j]，s2 该位置得以解决，往后移动一位到 j+1。由于没有动用 s1 中的
- *      任何字符，s1 位置不动，接下来比较 s1[i] 和 s2[j+1]；
- *  2.3 替换。既然 s1 该位置字符对不上，我们将它替换成 s2[j] 一样的字符，s2[j] 位置得以解决，同时由于动了 s1[i] 字符，所以操作后，两者都往后
- *      移动一位，接下来比较 s1[i+1] 和 s2[j+1]； 
- * 
- * 转移方程（转换表）：
- * 设 dp[i][j] 表示子串 s1[0:i+1] 到 s2[0:j+1] 的最小编辑距离。
- * （也就是说：i 表示的是 s1 中前 i 个字符构成的子串，j 亦是如此。）
- * 情况 1：dp[i][j] = dp[i-1][j-1]；
- * 情况 2.1：dp[i][j] = dp[i][j-1] + 1；
- * 情况 2.2：dp[i][j] = dp[i-1][j] + 1；
- * 情况 2.3：dp[i][j] = dp[i-1][j-1] + 1；
- * 情况 2.1、2.2、2.3 取最小的。
- * 
- * 初始：
- * 1. 当 i = 0 时，表示 s1 中的空串转换成 s2 中各子串，需执行若干步插入操作；
- * 2. 当 j = 0 时，表示 s1 中各子串转成 s2 空串，需执行若干步删除操作；
- * 
+ * After examining s1[0:i-1] -> s2[0:j-1], arr = [c1,c2,...,ck].
+ * Now examine positions i, j.
+ * 1. If s1[i] = s2[j], then directly copy the character s1[i] (or s2[j]) into arr (assume the cost of copying is 0),
+ *    then both sides move forward one position, continue examining s1[i+1] and s2[j+1];
+ * 2. If s1[i] != s2[j], then there are three operation methods: delete, insert, replace:
+ *  2.1 Delete: equivalent to s1 having an extra character ai at this position, we delete the ai character,
+ *      the problem is solved, s1 moves forward one position to s1[i+1]. No character is written to arr at this time
+ *      (meaning don't want this character), since we didn't touch any character in s2, s2 is still at position j,
+ *      next we compare s1[i+1] with s[j] (i.e., examine the minimum edit distance from s1[0:i+1] to s2[j]);
+ *  2.2 Insert: equivalent to s1 missing the character s2[j] at the current position, we insert it,
+ *      making the inserted character correspond to s2[j], s2's current position is solved, move forward to j+1.
+ *      Since we didn't use any character from s1, s1's position doesn't move, next compare s1[i] with s2[j+1];
+ *  2.3 Replace: Since s1's character at this position doesn't match, we replace it with the same character as s2[j],
+ *      s2[j]'s position is solved. Meanwhile since we changed s1[i], after the operation both move forward one position,
+ *      next compare s1[i+1] with s2[j+1];
+ *
+ * Transition equation (conversion table):
+ * Let dp[i][j] represent the minimum edit distance from substring s1[0:i+1] to s2[0:j+1].
+ * (That is: i represents the substring formed by the first i characters of s1, same for j.)
+ * Case 1: dp[i][j] = dp[i-1][j-1];
+ * Case 2.1: dp[i][j] = dp[i][j-1] + 1;
+ * Case 2.2: dp[i][j] = dp[i-1][j] + 1;
+ * Case 2.3: dp[i][j] = dp[i-1][j-1] + 1;
+ * Take the minimum of cases 2.1, 2.2, 2.3.
+ *
+ * Initial:
+ * 1. When i = 0, it means converting the empty string in s1 to each substring in s2, requiring several insert operations;
+ * 2. When j = 0, it means converting each substring in s1 to the empty string of s2, requiring several delete operations;
+ *
  * @see https://www.cnblogs.com/linvanda/p/16465191.html
  */
 
@@ -61,33 +68,33 @@ function minEditDistance(s1: string, s2: string): number {
         return 0
     }
 
-    // (s1.length + 1) * (s2.length + 1) 大小
+    // (s1.length + 1) * (s2.length + 1) size
     const dp: number[][] = []
 
-    // 初始化
+    // Initialize
     for (let i = 0; i <= s1.length; i++) {
         dp[i] = []
     }
 
-    // j = 0 时
+    // When j = 0
     for (let i = 0; i <= s1.length; i++) {
         dp[i][0] = i
     }
 
-    // i = 0 时
+    // When i = 0
     for (let j = 0; j <= s2.length; j++) {
         dp[0][j] = j
     }
 
-    // 状态转移
+    // State transition
     for (let i = 1; i <= s1.length; i++) {
         for (let j = 1; j <= s2.length; j++) {
-            // 注意：i、j 的含义是前 i、j 个字符，对应到下标应该减 1
+            // Note: the meaning of i, j is the first i, j characters, so the corresponding index should decrease by 1
             if (s1[i - 1] === s2[j - 1]) {
-                // 情况 1
+                // Case 1
                 dp[i][j] = dp[i - 1][j - 1]
             } else {
-                // 情况 2
+                // Case 2
                 dp[i][j] = Math.min(dp[i][j - 1], dp[i - 1][j], dp[i - 1][j - 1]) + 1
             }
         }

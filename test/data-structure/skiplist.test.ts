@@ -8,7 +8,7 @@ class SkipListTest extends SkipList {
             maxLevel = Math.max(this.randomLevel(), maxLevel)
         }
 
-        console.log(`testRandomLevel.执行${N}次，得到最大 level = ${maxLevel}.对应的理论次数:${Math.pow(SkipList.N, maxLevel - 1)}`)
+        console.log(`testRandomLevel executed ${N} times, got maximum level = ${maxLevel}. Corresponding theoretical count: ${Math.pow(SkipList.N, maxLevel - 1)}`)
     }
 
     public printLevel() {
@@ -21,7 +21,7 @@ class SkipListTest extends SkipList {
 
     public checkNullLevel() {
         for (let i = 0; i < this.level; i++) {
-            // head 的有效层不可能指向 null
+            // head 's valid levels cannot point to null
             if (!this.head.nexts[i]) {
                 throw new Error(`head.next[${i}] is null.level:${this.level}`)
             }
@@ -36,7 +36,7 @@ class SkipListTest extends SkipList {
 describe('skipList', () => {
     it('test random level', () => {
         const list = new SkipListTest()
-        // 只是打印，不做 assert
+        // Just printing, no assertions
         list.testRandomLevel(100000)
     })
     it('should be ok', () => {
@@ -65,7 +65,7 @@ describe('skipList', () => {
             assert.equal(list.search(d[0]), d[1])
         }
 
-        // 插入一个重复的
+        // Insert a duplicate
         list.insert(5, 100)
 
         assert.equal(list.size(), data.length)
@@ -76,7 +76,7 @@ describe('skipList', () => {
             list.checkNullLevel()
         })
 
-        // 删除
+        // delete
         for (const d of data) {
             list.delete(d[0])
         }
@@ -89,7 +89,7 @@ describe('skipList', () => {
         assert.equal(list.getLevel(), 0)
         assert.equal(list.tailNode(), null)
 
-        // 再执行一次
+        // then execute one more time
         n = 40000
         const data2: [number, number][] = []
         for (let i = 0; i < n; i++) {

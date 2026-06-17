@@ -4,22 +4,22 @@ interface Value {
 }
 
 /**
- * 二分搜索
- * @param arr - 待搜索数组，必须是按升序排好序的（根据 Value.key）
- * @param key - 搜索关键字
- * @reutrn 搜索到则返回对应的 Value，否则返回 null
+ * Binary search
+ * @param arr - Array to search, must be sorted in ascending order (by Value.key)
+ * @param key - Search key
+ * @reutrn Returns the corresponding Value if found, otherwise null
  */
 function binSearch(arr: Value[], key: number): Value | null {
     if (arr.length === 0) {
         return null
     }
 
-    // 子数组左右游标
+    // Left and right cursors of subarray
     let left = 0
     let right = arr.length - 1
 
     while (left <= right) {
-        // 取中
+        // Get midpoint
         const mid = left + Math.floor((right - left) / 2)
         const val = arr[mid]
 
@@ -27,7 +27,7 @@ function binSearch(arr: Value[], key: number): Value | null {
             return val
         }
 
-        // key 小于 val 则在左边找
+        // If key < val, search on the left
         if (key < val.key) {
             right = mid - 1
         } else {

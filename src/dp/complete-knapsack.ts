@@ -1,48 +1,49 @@
 /**
- * 完全背包问题
- * 有 N 件物品和一个容量为 V 的背包。第 i 件物品的体积是 vi，价值是 wi。
- * 求：将哪些物品装入背包可使这些物品在不超过背包容量 V 的前提下价值总和最大。
- * 和 0/1 背包问题不同的是，此处每种物品都可以用 0 个或者无数个。
- * 
- * 求解思路：
- * 和 0/1 背包的思路类似（请先参见 0/1 背包问题的说明）。
- * 我们用 dp[i][j] 表示在可用空间为 j 的情况下，利用前 i 个物品可以构成的最大价值。
- * 注意：每个物品可以用 0 次或者多次。
- * 分两种情况：
- * 1. 用第 i 个物品。此时剩余空间为 j - vi。注意，接下来要考察的问题和 0/1 背包有所不同，在 0/1 背包中，用了 i 物品后，
- *    只剩下 i - 1 个物品可用了，但此处因为不限物品使用次数，则剩下可用的物品还是 i 个，所以此时
- *    dp[i][j] = dp[i][j - vi] + wi。
- *    注意 dp[i][j - vi] 的含义：它表示在剩余空间 j - vi 的情况下，前 i 个物品能够组成的最大价值，这里面就包含了用 0 个
- *    或者多个物品 i 的情况。
- *   （需仔细理解情况 1，它囊括了在剩余空间 j 下用 1 个或多个物品 i 的所有场景，只有理解了这点，才能理解情况 2 中只需要考虑前 i - 1 个物品。）
- * 2. 除了 情况 1 以外，还有一种情况需要考虑：完全不用物品 i，此时剩余空间还是 j，也就是考察用前 i - 1 个物品在 j 空间构成
- *    的最大价值。
- *（情况 1 考察用（1 个或者多个）物品 i 的场景；情况 2 考察不用物品 i 的场景；）
- * 最终取两种情况中价值最大的。
- * 
- * 转换方程：
- * 当 j < vi 时：
+ * Complete Knapsack Problem
+ * There are N items and a knapsack with capacity V. The i-th item has volume vi and value wi.
+ * Find: which items to put into the knapsack so that the total value is maximized without exceeding the knapsack capacity V.
+ * The difference from the 0/1 Knapsack Problem is that here each type of item can be used 0 or unlimited times.
+ *
+ * Solution approach:
+ * Similar to the 0/1 knapsack approach (please see the 0/1 Knapsack Problem description first).
+ * We use dp[i][j] to represent the maximum value that can be formed using the first i items when the available space is j.
+ * Note: each item can be used 0 or many times.
+ * Two cases:
+ * 1. Use the i-th item. The remaining space is j - vi. Note, the problem to examine next differs from 0/1 knapsack:
+ *    in 0/1 knapsack, after using item i, only i-1 items remain available, but here since item usage count is unlimited,
+ *    the remaining available items are still i, so dp[i][j] = dp[i][j - vi] + wi.
+ *    Note the meaning of dp[i][j - vi]: it represents the maximum value that can be formed by the first i items
+ *    when the remaining space is j - vi, which already includes the case of using 0 or many item i.
+ *    (Need to carefully understand case 1, it covers all scenarios of using 1 or many item i in the remaining space j.
+ *    Only by understanding this can you understand why case 2 only needs to consider the first i-1 items.)
+ * 2. Besides case 1, there is still one case to consider: not using item i at all. The remaining space is still j,
+ *    which means examining the maximum value formed by the first i-1 items in space j.
+ * (Case 1 examines scenarios of using (1 or many) item i; case 2 examines scenarios of not using item i;)
+ * Finally get the maximum value from both cases.
+ *
+ * Transition equation:
+ * When j < vi:
  *  dp[i][j] = dp[i - 1][j]
- * 否则：
+ * Otherwise:
  *  dp[i][j] = max(dp[i - 1][j], dp[i][j - vi] + wi)
- * 从转换方程看，和 0/1 背包唯一的区别就是将 dp[i - 1][j - vi] + wi 改成了 dp[i][j - vi] + wi。
- * 
- * 优化：
- * 和 0/1 背包一样，可以通过滚动数组将空间复杂度优化到 O(V)。略。
+ * From the transition equation, the only difference from 0/1 knapsack is changing dp[i - 1][j - vi] + wi to dp[i][j - vi] + wi.
+ *
+ * Optimization:
+ * Same as 0/1 knapsack, can optimize space complexity to O(V) through rolling array. Omitted.
  */
 
 interface Goods {
-    // 物品价值
+    // Item value
     w: number;
-    // 物品体积，正整数
+    // Item volume/weight, positive integer
     v: number;
 }
 
 /**
- * 背包问题
- * @param goods - 物品集合
- * @param V - 背包容量。整数
- * @returns 最大价值
+ * Knapsack Problem
+ * @param goods - Item set
+ * @param V - Knapsack capacity. Integer
+ * @returns Maximum value
  */
 function knapsack(goods: Goods[], V: number): number {
     if (!goods.length || !V) {
@@ -50,10 +51,10 @@ function knapsack(goods: Goods[], V: number): number {
     }
 
     const N = goods.length
-    // 二维动态规划表，大小：N+1 * V+1
+    // 2D DP table, size: N+1 * V+1
     const dp: number[][] = []
 
-    // 初始化
+    // Initialize
     for (let i = 0; i <= N; i++) {
         dp[i] = []
 
@@ -66,12 +67,12 @@ function knapsack(goods: Goods[], V: number): number {
 
     for (let i = 1; i <= N; i++) {
         for (let j = 1; j <= V; j++) {
-            // 注意：i 表示前 i 个物品，转成下标需要减 1
+            // Note: i represents the first i items, to convert to index we need to decrease by 1
             if (goods[i - 1].v > j) {
-                // 当前物品体积大于可用体积，无法用当前物品
+                // Current item volume/weight greater than available volume, cannot use current item
                 dp[i][j] = dp[i - 1][j]
             } else {
-                // 可用该物品，用 0 个或多个，取最大的
+                // Can use this item, use 0 or many, get the maximum
                 dp[i][j] = Math.max(goods[i - 1].w + dp[i][j - goods[i - 1].v], dp[i - 1][j])
             }
         }

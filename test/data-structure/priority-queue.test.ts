@@ -32,14 +32,14 @@ describe('priority queue', () => {
             assert.equal(queue.size(), 0)
             assert.ok(queue.isEmpty())
 
-            // 加入元素
+            // add elements
             for (const ele of arr) {
                 queue.insert(ele)
             }
 
             assert.equal(queue.size(), arr.length)
 
-            // 检查 extract 出来的数据顺序是否符合要求
+            // check that extracted data order conforms to requirements
             let prev = Infinity
             let curr: Value
             while (!queue.isEmpty()) {
@@ -59,14 +59,14 @@ describe('priority queue', () => {
             assert.equal(queue.size(), 0)
             assert.ok(queue.isEmpty())
 
-            // 加入元素
+            // add elements
             for (const ele of arr) {
                 queue.insert(ele)
             }
 
             assert.equal(queue.size(), arr.length)
 
-            // 检查 extract 出来的数据顺序是否符合要求
+            // check that extracted data order conforms to requirements
             let prev = -Infinity
             let curr: Value
             while (!queue.isEmpty()) {

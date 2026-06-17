@@ -1,25 +1,25 @@
 /**
- * 散列表
- * 采用链表法解决哈希冲突
+ * Hash Table
+ * Uses chaining to resolve hash collisions
  * 
- * 散列表存储 key -> val，如何在 O(1) 的时间复杂度执行查找操作？
- * 1. 散列表对关键字 key 执行 hash 计算，得到 key 的 hash 值（整型），对于大小为 n 的 hash table，该值范围为 0 ~ n-1。
- * 2. 然后根据 key 的 hash 值将 (key,val) 放入相应的桶（bucket）中。
- *    所谓的桶，就是 C 语言层面的数组，特点：可以在 O(1) 时间内根据下标找到数组元素（C 语言中就是根据内存地址偏移量直接取值），散列表
- *    的 O(1) 时间复杂度本质就是这么来的（数组下标就是根据 key 的 hash 值来的）。
- * 3. hash 冲突：hash 函数将 key 转换成整型（数组下标），那么就存在多个不同的 key 被转成同样的 hash 值（映射到同一个数组下标），此
- *    为 hash 冲突。
- *    解决 hash 冲突的方式主要有两种：链表法和开放寻址法。
- *    此处实现链表法，开放寻址法参见 hashtable2.ts
- * 4. rehash。对于大小为 n 的散列表，存入 m 个元素，那么理论上每个槽位（数组项）存放 m/n 个元素，如果 m 大出 n 很多，对查找性能会有
- *    显著的影响。
- *    如：大小为 100 的散列表，存入 100000 个元素，那么平均每个槽位需要存 1000 个元素，无论采用链表法还是开放寻址法，最坏情况下都需要
- *    查找 1000 次才能找到（或找不到）目标对象。
- *    （对于链表法来说就是从表头遍历到表尾。）
- *    为了解决此问题，当散列表的装载因子（α=m/n）达到某个阈值时，需要执行 rehash。一般创建一个大小为 2n 的新散列表，然后对旧散列表中的
- *    每个元素针对新散列表重新计算 hash 值，并据此迁移到新散列表中相应的位置。
+ * A hash table stores key -> val. How to perform lookup in O(1) time complexity?
+ * 1. The hash table computes a hash value (integer) for key, with range 0 ~ n-1 for a hash table of size n.
+ * 2. Then place (key, val) into the corresponding bucket based on the hash value.
+ *    A bucket is essentially an array at the C language level, with the property that elements can be found by index in O(1) time (direct memory address offset in C). The hash table's
+ *    O(1) time complexity fundamentally comes from this (the array index is derived from the key's hash value).
+ * 3. Hash collision: The hash function converts keys to integers (array indices), so different keys may map to the same hash value (same array index). This
+ *    is a hash collision.
+ *    The main ways to resolve hash collisions are: chaining and open addressing.
+ *    This file implements chaining; see hashtable2.ts for open addressing.
+ * 4. Rehash: For a hash table of size n storing m elements, each slot (array entry) theoretically stores m/n elements. If m is much larger than n, lookup performance
+ *    will be significantly affected.
+ *    For example: a hash table of size 100 storing 100,000 elements means each slot stores an average of 1,000 elements. Whether using chaining or open addressing, the worst case requires
+ *    1,000 lookups to find (or not find) the target.
+ *    (For chaining, this means traversing from head to tail of the list.)
+ *    To solve this, when the load factor (alpha = m/n) reaches a threshold, a rehash is needed. Typically, a new hash table of size 2n is created, and each element from the old table
+ *    is rehashed and migrated to the appropriate position in the new table.
  * 
- * 链表法表示的 hashtable 示意图：
+ * Diagram of hashtable using chaining:
  *  0
  *  1 -> (key1, val1) -> (key2, val2)
  *  2
@@ -27,10 +27,10 @@
  *  4 -> (key4, val4) -> (key5, val5) -> (key6, val6)
  *  5
  *  ...
- * 其中纵列表示桶（数组），桶中存放链表。
- * 查找元素的时候，先定位到桶，然后遍历桶中链表。
+ * The vertical column represents buckets (array), each bucket holds a linked list.
+ * When looking up an element, first locate the bucket, then traverse the linked list in the bucket.
  * 
- * 在实际应用中，一些实现为防止链表过长导致性能退化，会采用改进的数据结构（如红黑树、跳表）代替链表。
+ * In practice, some implementations use improved data structures (e.g., red-black trees, skip lists) instead of linked lists to prevent performance degradation from long chains.
  */
 
 import { Link } from "./link"
@@ -40,21 +40,21 @@ interface Value {
     val: unknown;
 }
 
-// 高水位。装载因子大于此则扩展散列表
+// High water mark. Expand hash table when load factor exceeds this
 const HIGH_WATER = 0.75
-// 低水位。装载因子低于此则收缩散列表
+// Low water mark. Shrink hash table when load factor falls below this
 const LOW_WATER = 0.25
-// 散列表初始大小
+// Initial hash table size
 const INIT_CAP = 17
 
 /**
- * 基于链表法实现的hash table
- * 为方便，此处限制 key 为 string 类型
+ * Hash table implemented using chaining
+ * For convenience, key is restricted to string type
  */
 class HashTable {
-    // 桶
+    // Buckets
     private arr: Link[]
-    // 元素数量
+    // Number of elements
     private size: number
 
     public constructor() {
@@ -63,49 +63,49 @@ class HashTable {
     }
 
     /**
-     * 元素数量
+     * Element count
      */
     public count(): number {
         return this.size
     }
 
     /**
-     * 桶数量（即内部数组大小）
+     * Bucket count (i.e., internal array size)
      */
     public capacity(): number {
         return this.arr.length
     }
 
     /**
-     * 设置（存储）
+     * Set (store)
      */
     public set(key: string, val: unknown) {
         if (!key) {
             throw new Error('invalid key')
         }
 
-        // 设置之前尝试执行 extend 扩展散列表
+        // Try to extend the hash table before setting
         if (this.size / this.arr.length >= HIGH_WATER) {
             this.extend()
         }
 
-        // 定位槽位
+        // Locate slot
         const slot = this.hash(key)
         if (!this.arr[slot]) {
-            // 为该槽位创建新链表
+            // Create a new linked list for this slot
             this.arr[slot] = new Link()
         }
 
-        // 插入到槽位中
+        // Insert into the slot
         this.arr[slot].insert({ key, val })
 
-        // 调整 size
+        // Adjust size
         this.size++
     }
 
     /**
-     * 根据 key 获取值
-     * 如果不存在则返回 undefined
+     * Get value by key
+     * Returns undefined if not found
      */
     public get(key: string): unknown {
         if (!key) {
@@ -118,11 +118,11 @@ class HashTable {
 
         const link = this.arr[this.hash(key)]
         if (!link) {
-            // 槽位空
+            // Slot is empty
             return undefined
         }
 
-        // 从链表中搜索值
+        // Search value from linked list
         const node = link.searchByFunc((data: unknown) => {
             return (data as Value)?.key === key
         })
@@ -131,21 +131,21 @@ class HashTable {
     }
 
     /**
-     * 删除 key 对应的元素
+     * Remove element corresponding to key
      */
     public remove(key: string) {
         if (!key || !this.size) {
             return
         }
 
-        // 定位槽位
+        // Locate slot
         const slot = this.hash(key)
         const link = this.arr[slot]
         if (!link) {
             return
         }
 
-        // 找节点
+        // Find node
         const node = link.searchByFunc((data: unknown) => {
             return (data as Value)?.key === key
         })
@@ -154,43 +154,43 @@ class HashTable {
             return
         }
 
-        // 删节点
+        // Delete node
         link.delete(node)
 
-        // 如果链表是空，则将链表删除
+        // If linked list is empty, remove it
         if (link.isEmpty()) {
             this.arr[slot] = null
         }
 
         this.size--
 
-        // 收缩散列表
+        // Shrink hash table
         if (this.size / this.arr.length < LOW_WATER && this.arr.length > INIT_CAP) {
             this.shrink()
         }
     }
 
     /**
-     * 扩展散列表
+     * Extend hash table
      */
     private extend() {
-        // 扩展至两倍
+        // Extend to double
         this.rehash(this.arr.length << 1)
     }
 
     /**
-     * 收缩散列表
+     * Shrink hash table
      */
     private shrink() {
-        // 收缩至一半
+        // Shrink to half
         this.rehash(this.arr.length >> 1)
     }
 
     /**
-     * rehash
-     * 创建新数组，并将旧数组的元素迁移至新数组（需重新计算 hash）
-     * 注：实际中，需要迁移的数据可能非常多，如果一次迁移会导致程序卡顿，一般会采用增量迁移的方式，每次 set/remove 的时候迁移一部分。
-     * 增量迁移下，内部需要维护两个数组：oldArr 和 newArr，get、remove 都要先操作 oldArr，如果 oldArr 没找到，则操作 newArr
+     * Rehash
+     * Create a new array and migrate elements from the old array (requires recomputing hash)
+     * Note: In practice, the data to migrate may be very large. If migrating all at once causes lag, incremental migration is typically used, migrating a portion on each set/remove.
+     * With incremental migration, two arrays need to be maintained internally: oldArr and newArr. get and remove operate on oldArr first; if not found in oldArr, operate on newArr
      */
     private rehash(newCap: number) {
         const newArr = new Array(newCap)
@@ -204,9 +204,9 @@ class HashTable {
 
             while (!link.isEmpty()) {
                 const val = link.shift().data as Value
-                // 针对新数组计算 hash
+                // Compute hash for the new array
                 const slot = this.hash(val.key, newCap)
-                // 插入到新数组中
+                // Insert into the new array
                 if (!newArr[slot]) {
                     newArr[slot] = new Link()
                 }
@@ -218,26 +218,26 @@ class HashTable {
     }
 
     /**
-     * 为 key 计算 hash 值，范围 0 ~ cap-1
+     * Compute hash value for key, range 0 ~ cap-1
      */
     private hash(key: string, cap = 0): number {
         cap = cap || this.arr.length
 
         const num = this.string2number(key)
 
-        // 用取模的将 num 转成 0 ~ size-1 的数
-        // 注意 size 不要是 2 的幂(2^p)，否则取模就是取 p 个最低位（即高位根本不会影响结果）
-        // 另一种方式是乘法：floor(size * (num*A mod 1))，其中 0 < A < 1。（mod 1 表示取小数部分）
+        // Use modulo to convert num to a value in range 0 ~ size-1
+        // Note: size should not be a power of 2 (2^p), otherwise modulo just takes the p lowest bits (higher bits have no effect)
+        // Another approach is multiplication: floor(size * (num*A mod 1)), where 0 < A < 1 (mod 1 means taking the fractional part)
         return num % cap
     }
 
     /**
-     * 将字符串转成整型
+     * Convert string to integer
      */
     private string2number(key: string): number {
         let total = 0;
         for (let i = 0; i < key.length; i++) {
-            total = (total + 13 * total + key.charCodeAt(i)) >>> 0;// 转成正数
+            total = (total + 13 * total + key.charCodeAt(i)) >>> 0;// Convert to positive number
         }
 
         return total

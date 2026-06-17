@@ -1,3 +1,3 @@
 /**
- * van Emde Boas 树
+ * van Emde Boas Tree
  */

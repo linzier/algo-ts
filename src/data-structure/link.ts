@@ -1,16 +1,16 @@
 /**
- * 链表
- * 此处实现带哨兵的双向链表
+ * Linked List
+ * This implements a doubly linked list with sentinel
  * 
- * 哨兵是一个特殊的 Node，用来简化链表的操作（特别是删除操作）。
- * 加入哨兵后，哨兵扮演了 head 和 tail 的角色（Link 不再需要 head 和 tail 指针），整个 Link 构成了循环链表，
- * 第一个 Node 的 prev 指向哨兵，最后一个 Node 的 next 也指向哨兵；
- * 哨兵的 next 指向第一个 Node，哨兵的 pre 指向最后一个 Node；
- * 初始化时，哨兵的 pre 和 next 指向自己。
+ * A sentinel is a special Node used to simplify linked list operations (especially deletion).
+ * With a sentinel, it plays the roles of both head and tail (Link no longer needs separate head and tail pointers). The entire Link forms a circular linked list,
+ * where the first Node's prev points to the sentinel, and the last Node's next also points to the sentinel;
+ * the sentinel's next points to the first Node, and the sentinel's prev points to the last Node;
+ * during initialization, the sentinel's prev and next point to itself.
  */
 
 /**
- * 节点定义
+ * Node definition
  */
 interface Node {
     data: unknown;
@@ -19,20 +19,20 @@ interface Node {
 }
 
 /**
- * 双向链表
+ * Doubly linked list
  */
 class Link {
-    // 链表中元素数量
+    // Number of elements in the list
     protected _size: number
-    // 哨兵节点
+    // Sentinel node
     protected sentinel: Node
 
     public constructor() {
         this._size = 0
         
-        // 初始化哨兵，其 prev 和 next 都指向自身
+        // Initialize sentinel, its prev and next both point to itself
         const sentinel = { data: null, prev: null, next: null } as Node
-        // prev 和 next 指向自身
+        // prev and next point to self
         sentinel.prev = sentinel.next = sentinel
         this.sentinel = sentinel
     }
@@ -46,15 +46,15 @@ class Link {
     }
 
     /**
-     * 向链表（头）插入数据 data
+     * Insert data at the head of the linked list
      * 
-     * @param data - 待插入元素
-     * @returns 生成的新节点 Node
+     * @param data - Element to insert
+     * @returns The newly created Node
      */
     public insert(data: unknown): Node {
         this._size++
 
-        // 将 data 包装成 Node
+        // Wrap data as a Node
         const node = {
             data,
             prev: this.sentinel,
@@ -68,12 +68,12 @@ class Link {
     }
 
     /**
-     * 查找 data
-     * @param data 
-     * @returns 如果找到，则返回对应的 Node，否则返回 null
+     * Search for data
+     * @param data
+     * @returns The corresponding Node if found, otherwise null
      */
     public search(data: unknown): Node | null {
-        // 从 sentinel.next 往后找
+        // Search forward from sentinel.next
         let curr = this.sentinel.next
         while (curr !== this.sentinel) {
             if (curr.data === data) {
@@ -87,9 +87,9 @@ class Link {
     }
 
     /**
-     * 根据自定义函数查找 data
-     * @param data 
-     * @returns 如果找到，则返回对应的 Node，否则返回 null
+     * Search for data using a custom function
+     * @param data
+     * @returns The corresponding Node if found, otherwise null
      */
     public searchByFunc(compareFunc: (data: unknown) => boolean): Node | null {
         let curr = this.sentinel.next
@@ -105,12 +105,12 @@ class Link {
     }
 
     /**
-     * 删除节点
-     * 删除前：nodePrev -> node -> nodeNext
-     * 删除后：nodePrev -> nodeNext，且 node 不再引用 nodePrev 和 nodeNext
+     * Delete node
+     * Before: nodePrev -> node -> nodeNext
+     * After: nodePrev -> nodeNext, and node no longer references nodePrev and nodeNext
      */
     public delete(node: Node) {
-        // 判断 node 是否已经被删除了
+        // Check if node has already been deleted
         if (node.prev === null || node.next === null) {
             return
         }
@@ -118,13 +118,13 @@ class Link {
         node.prev.next = node.next
         node.next.prev = node.prev
 
-        // 清理前后指针
+        // Clear forward and backward pointers
         node.prev = node.next = null
         this._size--
     }
 
     /**
-     * 取出表头节点并从链表中删除
+     * Remove and return the head node from the linked list
      */
     public shift(): Node | null {
         if (!this._size) {
@@ -138,7 +138,7 @@ class Link {
     }
 
     /**
-     * 取出表尾元素，并从链表中删除
+     * Remove and return the tail element from the linked list
      */
     public pop(): Node | null {
         if (!this._size) {

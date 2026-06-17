@@ -28,11 +28,11 @@ const arrs: Value[][] = [
 describe('heap', () => {
     it('build heap from array', () => {
         for (const arr of arrs) {
-            // 取数组副本
+            // get array copy
             const maxHeap = new Heap(arr.slice(0), true)
             assert.equal(maxHeap.size(), arr.length)
 
-            // 检验大顶堆的正确性（依次 pop，前面的总比后面的大（或等于））
+            // examine max-heap correctness (sequentially pop, previous is always >= next)
             let prev = Infinity
             let curr: Value
             while (!maxHeap.isEmpty()) {
@@ -51,7 +51,7 @@ describe('heap', () => {
             const len = arr.length
             const maxHeap = new Heap(arr.slice(0), true)
 
-            // push、pop 操作以及 size 的正确性
+            // correctness of push, pop operations and size
             if (!maxHeap.isEmpty()) {
                 maxHeap.pop()
                 assert.equal(maxHeap.size(), len - 1)
@@ -66,7 +66,7 @@ describe('heap', () => {
                 })
             }
 
-            // 经过一番 push、pop 后仍然保持堆的特性
+            // after some push/pop operations, heap property is still maintained
             let prev = Infinity
             let curr: Value
             while (!maxHeap.isEmpty()) {

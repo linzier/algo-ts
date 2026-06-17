@@ -1,32 +1,33 @@
 /**
- * 最大子数组（又称为最大子序和）
- * 分治算法求解，时间复杂度：O(n*lgn)
- * 
- * 问题描述：
- * 给定一个整数数组 A，找到一个具有最大和的连续子数组（子数组最少包含一个元素），并返回其最大和。
- * 如：A = [-2, 1, -3, 4, -1, 2, 1, -5, 4]，最大子数组为 [4, -1, 2, 1]，和为 6。
- * 
- * 该问题的最差求解方式是暴力求解，其时间复杂度是 O(n^2)。
- * 
- * 分治策略求解思路：
- *  分治策略分三步：分解、求解、合并。
- *  分解：将问题分解成性质相似但规模更小的子问题（一般分解成两个），本例中将整个数组自中间分为两个子数组：
- *       L = [-2, 1, -3, 4, -1], R = [2, 1, -5, 4]；
- *  求解：由于子数组和上层数组具备相似的性质，所以可通过递归求解子数组 L 和 R 的解（先假定其分别为 subL 和 subR）；
- *  合并：算得 L 和 R 的最大子数组后，我们考察 A 的最大子数组，必然是以下三种情况中的一种：
- *       1. 要么是 subL（即 A 的最大子数组在 L 中）；
- *       2. 要么是 subR（即 A 的最大子数组在 R 中）；
- *       3. 要么同时落在 L 和 R 上（即横跨 L 和 R，至少包含 -1 和 2 两个元素）；
- *       那么接下来的关键就是求解第 3 中情况的最大子数组，然后比较三者取最大的。
- *       对于情况 3，由于最大子数组一定包括 L 的右边界和 R 的左边界，所以我们分别从 L 的右边界（-1）和 R 的左边界（2）分别往两边遍历，即可
- *       求得结果，其时间复杂度是 O(n)。 
- * 
- * @see maximum-subarray2.ts 基于动态规划实现 O(n) 复杂度的解法
+ * Maximum Subarray (also known as Maximum Subarray Sum)
+ * Divide and Conquer solution, time complexity: O(n*lgn)
+ *
+ * Problem description:
+ * Given an integer array A, find a contiguous subarray with the maximum sum (subarray must contain at least one element), and return its maximum sum.
+ * For example: A = [-2, 1, -3, 4, -1, 2, 1, -5, 4], maximum subarray is [4, -1, 2, 1], sum is 6.
+ *
+ * The most straightforward solution to this problem is brute force, with time complexity O(n^2).
+ *
+ * Divide and conquer strategy solution approach:
+ *  Divide and conquer has three steps: divide, solve, merge.
+ *  Divide: Divide the problem into subproblems with similar properties but smaller scale (generally divide into two), in this example divide the entire
+ *       array from the middle into two subarrays: L = [-2, 1, -3, 4, -1], R = [2, 1, -5, 4];
+ *  Solve: Since subarrays and the parent array have similar properties, we can recursively solve for the solutions of subarrays L and R
+ *       (first assume they are subL and subR respectively);
+ *  Merge: After calculating the maximum subarrays of L and R, we examine the maximum subarray of A, which must be one of three cases:
+ *  1. Either it is subL (i.e., A's maximum subarray is within L);
+ *  2. Or it is subR (i.e., A's maximum subarray is within R);
+ *  3. Or it spans both L and R (i.e., crossing L and R, containing at least the two elements -1 and 2);
+ *  The key then is to solve the maximum subarray in case 3, then compare all three and get the maximum.
+ *  For case 3, since the maximum subarray must include L's right boundary and R's left boundary, we traverse from L's right boundary (-1)
+ *       and R's left boundary (2) towards both sides respectively to obtain the result, with time complexity O(n).
+ *
+ * @see maximum-subarray2.ts for the Dynamic Programming implementation with O(n) complexity
  */
 
 /**
- * 定义最大子数组信息结构体：起止位置以及和
- * 如果是空数组，则 start 和 end 都是 -1
+ * Define maximum subarray information structure: start/end positions and sum
+ * If it's an empty array, then start and end are both -1
  */
 interface MaxSubInfo {
     start: number;
@@ -35,7 +36,7 @@ interface MaxSubInfo {
 }
 
 /**
- * 求 arr 的最大子数组，返回对应的子数组以及和
+ * Find the maximum subarray of arr, return the corresponding subarray sum and indices
  */
 function maxSubarray(arr: number[]): MaxSubInfo {
     if (!arr.length) {
@@ -50,23 +51,23 @@ function maxSubarray(arr: number[]): MaxSubInfo {
 }
 
 /**
- * 该函数能求解子数组 arr[start:end] 的最大子数组（最大子序和）
+ * This function can solve the maximum subarray (maximum subarray sum) of subarray arr[start:end]
  */
 function findMaxSubarray(arr: number[], start: number, end: number): MaxSubInfo {
     if (start == end) {
-        // 子数组只有一个元素，终止递归
+        // Subarray only has one element, terminate recursion
         return { start, end, sum: arr[start] }
     }
 
-    // 不止一个元素时，将 arr 一分为二，分别递归求解左右两个数组的最大子数组
+    // When there is more than one element, split arr in two, recursively solve the maximum subarray of left and right arrays respectively
     const mid = start + Math.floor((end - start) / 2)
     const subL = findMaxSubarray(arr, start, mid)
     const subR = findMaxSubarray(arr, mid + 1, end)
 
-    // 求解横跨左右两个数组的那个最大子数组
+    // Solve the maximum subarray crossing both left and right arrays
     const subM = findCrossMaxSubarray(arr, start, mid, end)
 
-    // 从 subL、subR、subM 中取最大的返回
+    // Get the maximum from subL, subR, subM and return
     if (subL.sum >= subR.sum && subL.sum >= subM.sum) {
         return subL
     } else if (subR.sum >= subL.sum && subR.sum >= subM.sum) {
@@ -77,19 +78,20 @@ function findMaxSubarray(arr: number[], start: number, end: number): MaxSubInfo 
 }
 
 /**
- * 求横跨 L = arr[start:mid] 和 R = arr[mid+1:end] 两个数组的最大子数组
- * 注意：该最大子数组至少在 L 和 R 中各占一个元素（否则就变成全部在 L 或者全部在 R，就不满足“横跨”的条件了）
+ * Find the maximum subarray crossing both L = arr[start:mid] and R = arr[mid+1:end]
+ * Note: this maximum subarray must occupy at least one element in each of L and R (otherwise it would become entirely in L or entirely in R,
+ * which wouldn't satisfy the “crossing” condition)
  */
 function findCrossMaxSubarray(arr: number[], start: number, mid: number, end: number): MaxSubInfo {
-    // 求左边
-    // 最大子数组左下标
+    // Solve left side
+    // Maximum subarray left index
     let maxLeftIdx = 0
-    // 最大子数组的和，初始化为无穷小
+    // Maximum subarray sum, initialized to negative infinity
     let maxLeftSum = -Infinity
-    // 左侧所有元素的和
+    // Sum of all elements on the left side
     let leftSum = 0
 
-    // 从 mid 到 start 依次扫描
+    // Scan sequentially from mid to start
     for (let i = mid; i >= start; i--) {
         leftSum += arr[i]
         if (leftSum > maxLeftSum) {
@@ -98,7 +100,7 @@ function findCrossMaxSubarray(arr: number[], start: number, mid: number, end: nu
         }
     }
 
-    // 求右边
+    // Solve right side
     let maxRightIdx = 0
     let maxRightSum = -Infinity
     let rightSum = 0

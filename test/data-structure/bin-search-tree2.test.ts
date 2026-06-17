@@ -8,14 +8,14 @@ function commonAssertTree(tree: BinSearchTree, total: number) {
     assert.equal(tree.search(20), 20)
     assert.equal(tree.search(100), undefined)
     
-    // 中序
+    // inorder
     const inOrders4 = tree.inorderWalk()
     assert.equal(inOrders4.length, total)
     for (let i = 1; i < inOrders4.length; i++) {
         assert.ok(inOrders4[i - 1].key <= inOrders4[i].key)
     }
     
-    // 先序
+    // preorder
     const preOrders4 = tree.preorderWalk()
     assert.equal(tree.preorderWalk().length, total)
     const preArr4 = [9, 4, 2, 3, 6, 7, 17, 13, 15, 18, 20]
@@ -23,7 +23,7 @@ function commonAssertTree(tree: BinSearchTree, total: number) {
         assert.equal(preOrders4[i].key, preArr4[i])
     }
 
-    // 后序
+    // postorder
     const postOrders4 = tree.postorderWalk()
     assert.equal(postOrders4.length, total)
     const postArr4 = [3, 2, 7, 6, 4, 15, 13, 20, 18, 17, 9]
@@ -34,7 +34,7 @@ function commonAssertTree(tree: BinSearchTree, total: number) {
     assert.equal(tree.minimum().key, 2)
     assert.equal(tree.maximum().key, 20)
 
-    // 范围查询
+    // range query
     const start = 6
     const end = 13
     const arr = tree.range(start, end)
@@ -101,7 +101,7 @@ describe('bin search tree(recurrence)', () => {
         assert.equal(tree.maximum(node).key, 20)
         assert.equal(tree.minimum(node).key, 13)
 
-        // 删除
+        // delete
         tree.delete(3)
         assert.equal(tree.size(), 10)
         assert.equal(tree.searchNode(3), null)

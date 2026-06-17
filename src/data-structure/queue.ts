@@ -1,8 +1,8 @@
 /**
- * 队列
- * 先进先出
+ * Queue
+ * First In First Out
  * 
- * 这里用链表实现普通队列，用数组实现循环队列。
+ * Uses a linked list for the regular queue and an array for the circular queue.
  */
 
 import { Link } from './link'
@@ -23,15 +23,15 @@ class Queue {
     }
 
     /**
-     * 入列
+     * Enqueue
      */
     public enqueue(data: unknown) {
         this.link.insert(data)
     }
 
     /**
-     * 出列
-     * 如果队列为空则抛异常
+     * Dequeue
+     * Throws an exception if queue is empty
      */
     public dequeue(): unknown {
         if (this.isEmpty()) {
@@ -43,26 +43,26 @@ class Queue {
 }
 
 /**
- * 循环队列
- * 用数组实现大小为 n 的循环队列。
- * 循环队列内部有两个指针：head 指向队头，tail 指向队尾的第一个空位。
+ * Circular Queue
+ * Implements a circular queue of size n using an array.
+ * The circular queue has two internal pointers: head points to the front, tail points to the first empty slot after the rear.
  * 
- * 实现方式：
- *   让 head 和 tail 的值永远只增不减，这种情况下我们就能通过 tail - head 判断队列是否满了（或空了）。
- *   由于 head 和 tail 只增不减，所以要通过 head mod n、tail mod n（对 n 取模）来计算两者在数组中的实际下标。
- * （
- *   循环队列还有另一种实现方式：tail 和 head 表示数组中实际下标位置（取值 0 ~ n-1）。
- *   此时数组大小要是 n+1，永远有一个空位（也就是 tail 指向的位置），当整个数组只有一个空位（即 tail 后面就是 head）时，
- *   表示数组满了。当 head 和 tail 重叠时表示数组空了。
- *  ）
+ * Implementation:
+ *   Keep head and tail values always increasing (never decreasing), so we can determine if the queue is full (or empty) via tail - head.
+ *   Since head and tail only increase, we compute actual array indices via head mod n and tail mod n.
+ * (
+ *   Another implementation approach: tail and head represent actual array index positions (values 0 ~ n-1).
+ *   The array size would be n+1, always having one empty slot (the position tail points to). When there is only one empty slot (i.e., head is right after tail),
+ *   the array is full. When head and tail overlap, the array is empty.
+ * )
  */
 class CircularQueue {
-    // 队列容量
+    // Queue capacity
     private readonly CAP: number
     private arr: unknown[]
-    // 指向队列头（第一个元素）
+    // Points to the front of the queue (first element)
     private head: number
-    // 指向第一个空位
+    // Points to the first empty slot
     private tail: number
 
     public constructor(capacity: number) {
@@ -89,7 +89,7 @@ class CircularQueue {
     }
 
     /**
-     * 入列
+     * Enqueue
      */
     public enqueue(data: unknown) {
         if (this.isFull()) {
@@ -101,7 +101,7 @@ class CircularQueue {
     }
 
     /**
-     * 出列
+     * Dequeue
      */
     public dequeue(): unknown {
         if (this.isEmpty()) {

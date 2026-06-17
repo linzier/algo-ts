@@ -1,82 +1,82 @@
 /**
- * 散列表
- * 采用开放寻址法解决哈希冲突
+ * Hash Table
+ * Uses open addressing to resolve hash collisions
  * 
- * 散列表存储 key -> val，如何在 O(1) 的时间复杂度执行查找操作？
- * 1. 散列表对关键字 key 执行 hash 计算，得到 key 的 hash 值（整型），对于大小为 n 的 hash table，该值范围为 0 ~ n-1。
- * 2. 然后根据 key 的 hash 值将 (key,val) 放入相应的桶（bucket）中。
- *    所谓的桶，就是 C 语言层面的数组，特点：可以在 O(1) 时间内根据下标找到数组元素（C 语言中就是根据内存地址偏移量直接取值），散列表
- *    的 O(1) 时间复杂度本质就是这么来的（数组下标就是根据 key 的 hash 值来的）。
- * 3. hash 冲突：hash 函数将 key 转换成整型（数组下标），那么就存在多个不同的 key 被转成同样的 hash 值（映射到同一个数组下标），此
- *    为 hash 冲突。
- *    解决 hash 冲突的方式主要有两种：链表法和开放寻址法。
- *    此处实现开放寻址法，链表法参见 hashtable1.ts。
- * 4. rehash。对于大小为 n 的散列表，存入 m 个元素，那么理论上每个槽位（数组项）存放 m/n 个元素，如果 m 大出 n 很多，对查找性能会有
- *    显著的影响。
- *    如：大小为 100 的散列表，存入 100000 个元素，那么平均每个槽位需要存 1000 个元素，无论采用链表法还是开放寻址法，最坏情况下都需要
- *    查找 1000 次才能找到（或找不到）目标对象。
- *    为了解决此问题，当散列表的装载因子（α=m/n）达到某个阈值时，需要执行 rehash。一般创建一个大小为 2n 的新散列表，然后对旧散列表中的
- *    每个元素针对新散列表重新计算 hash 值，并据此迁移到新散列表中相应的位置。
+ * A hash table stores key -> val. How to perform lookup in O(1) time complexity?
+ * 1. The hash table computes a hash value (integer) for key, with range 0 ~ n-1 for a hash table of size n.
+ * 2. Then place (key, val) into the corresponding bucket based on the hash value.
+ *    A bucket is essentially an array at the C language level, with the property that elements can be found by index in O(1) time (direct memory address offset in C). The hash table's
+ *    O(1) time complexity fundamentally comes from this (the array index is derived from the key's hash value).
+ * 3. Hash collision: The hash function converts keys to integers (array indices), so different keys may map to the same hash value (same array index). This
+ *    is a hash collision.
+ *    The main ways to resolve hash collisions are: chaining and open addressing.
+ *    This file implements open addressing; see hashtable1.ts for chaining.
+ * 4. Rehash: For a hash table of size n storing m elements, each slot (array entry) theoretically stores m/n elements. If m is much larger than n, lookup performance
+ *    will be significantly affected.
+ *    For example: a hash table of size 100 storing 100,000 elements means each slot stores an average of 1,000 elements. Whether using chaining or open addressing, the worst case requires
+ *    1,000 lookups to find (or not find) the target.
+ *    To solve this, when the load factor (alpha = m/n) reaches a threshold, a rehash is needed. Typically, a new hash table of size 2n is created, and each element from the old table
+ *    is rehashed and migrated to the appropriate position in the new table.
  * 
- * 开放寻址法：
- *  不同于链表法将元素存放在链表中，开放寻址法直接将元素存放在桶（数组）中。
- *  当遇到 hash 冲突时（hash 函数计算出来的下标对应到同一个桶位置，设为 i），我们依次不断地（根据某种规则）尝试将元素放在 i 后面的第 m 个
- *  桶中————循环查找（至多 n-1 次，n 是散列表数组大小），直到找到一个空位插入。
- *  如：
- *  （简单起见，这里只展示关键字 key，没有展示卫星数据）
- *           值：null  null   key1    key2    null    null    key3
- *      数组下标： 0     1      2       3       4       5       6
- *  现在需要保存 key5。
- *  假设 hash'(key5) = 2，按理应插入到 arr[2]，但此位置已经有值 key1了，所以我们采用某种策略依次往后面找。假设策略是依次往后加 1，则接下来
- *  看 arr[3]，该位置也有值了，所以继续看 arr[4]，该位置空，所以 key5 放在 arr[4]。
- *  查找：现在考虑查找 key5。
- *  hash'(key5) = 2，先查 arr[2] 并比较，发现不是 key5；继续往后找，发现 arr[3] 也不是 key5，直到找到 arr[4] 等于 key5，返回。
- *  查找：key6。
- *  假设 hash'(key6) = 4，检查 arr[4] 并比较，发现不是 key6；继续往后找，发现 arr[5] = null，直接返回不存在。
- *  查找：key7。
- *  假设 hash'(key7) = 1，arr[1] = null，直接返回不存在。
+ * Open addressing:
+ *  Unlike chaining which stores elements in linked lists, open addressing stores elements directly in buckets (array).
+ *  When a hash collision occurs (the hash function computes the same index i for different keys), we repeatedly try (according to some rule) to place the element in the m-th
+ *  bucket after i -- probing (at most n-1 times, where n is the hash table array size) until an empty slot is found.
+ *  if: 
+ *  (For simplicity, only the key is shown here, not the satellite data)
+ *  value: null null key1 key2 null null key3
+ *  arrayindex: 0 1 2 3 4 5 6
+ *  Now we need to store key5.
+ *  Suppose hash'(key5) = 2, it should be inserted at arr[2], but this position already has key1, so we use some strategy to search sequentially. Suppose the strategy is to add 1 each time, then next
+ *  check arr[3], which also has a value, so continue to arr[4], which is empty, so key5 is placed at arr[4].
+ *  Lookup: Now consider looking up key5.
+ *  hash'(key5) = 2，First check arr[2] and compare, it's not key5; continue searching, arr[3] is also not key5, until finding arr[4] equals key5, return.
+ *  Lookup: key6.
+ *  Suppose hash'(key6) = 4, check arr[4] and compare, it's not key6; continue searching, find arr[5] = null, return not found directly.
+ *  Lookup: key7.
+ *  Suppose hash'(key7) = 1, arr[1] = null, return not found directly.
  * 
- * 删除元素：
- *  思考：针对上面的数组，删除 arr[2] 后会怎样？
- *  删除后：
- *           值：null  null   null    key2    key5    null    key3
- *      数组下标： 0     1      2       3       4       5       6 
- *  现在再查找 key5。
- *  hash'(key5) = 2，而 arr[2] = null，按照前面的逻辑会认为 key5 不存在，这是有问题的。
- *  所以删除的时候不能将对应位置置为 null，而是需要放入一个占位符：
- *  删除后：
- *           值：null  null   del    key2    key5    null    key3
- *      数组下标： 0     1      2       3       4       5       6 
- *  查找 key5: hash'(key5) = 2，发现 arr[2] 有占位符，继续往后找，直到找到 arr[4] = key5 并返回。
- *  插入 key8: 假设 hash'(key8) = 2，发现 arr[2] = del，直接插入到此位置。
+ * Deleting elements:
+ *  Consider: for the above array, what happens after deleting arr[2]?
+ *  After deletion:
+ *  value: null null null key2 key5 null key3
+ *  arrayindex: 0 1 2 3 4 5 6 
+ *  Now look up key5 again.
+ *  hash'(key5) = 2，and arr[2] = null, according to the previous logic it would think key5 doesn't exist, which is problematic.
+ *  So when deleting, we cannot set the position to null, but need to put a placeholder:
+ *  After deletion:
+ *  value: null null del key2 key5 null key3
+ *  arrayindex: 0 1 2 3 4 5 6 
+ *  Lookup key5: hash'(key5) = 2, find arr[2] has a placeholder, continue searching until finding arr[4] = key5 and return.
+ *  Insert key8: Suppose hash'(key8) = 2, find arr[2] = del, insert directly at this position.
  */
 
 interface Value {
     key: string;
     val: unknown;
-    // 标记该元素是否处于删除态
+    // Whether this element is marked as deleted
     isDel: boolean;
 }
 
-// 高水位。装载因子大于此则扩展散列表
+// High water mark. Expand hash table when load factor exceeds this
 const HIGH_WATER = 0.75
-// 低水位。装载因子低于此则收缩散列表
+// Low water mark. Shrink hash table when load factor falls below this
 const LOW_WATER = 0.25
-// 散列表初始大小
+// Initial hash table size
 const INIT_CAP = 16
 
 /**
- * 基于开放寻址法实现的 hash table
- * 为方便，此处限制 key 为 string 类型
+ * Hash table implemented using open addressing
+ * For convenience, key is restricted to string type
  * 
- * 相较于链表法，开放寻址法更节约内存。
- * 不过，因为删除元素后仍然需要用占位符占用相应槽位，所以删除元素后并不会减少查询时的探查次数，
- * 一般在需要频繁删除元素的场景使用链表法更合适。
+ * Compared to chaining, open addressing is more memory-efficient.
+ * However, since deleted elements still need a placeholder occupying the slot, deletion does not reduce probe counts during lookup.
+ * Chaining is generally more suitable for scenarios with frequent element deletions.
  */
 class HashTable {
-    // 桶
+    // Buckets
     private arr: Value[]
-    // 元素数量
+    // Number of elements
     private size: number
 
     public constructor() {
@@ -89,45 +89,45 @@ class HashTable {
     }
 
     /**
-     * 元素数量
+     * Element count
      */
     public count(): number {
         return this.size
     }
 
     /**
-     * 桶数量（即内部数组大小）
+     * Bucket count (i.e., internal array size)
      */
     public capacity(): number {
         return this.arr.length
     }
 
     /**
-     * 设置（存储）
+     * Set (store)
      */
     public set(key: string, val: unknown) {
         if (!key) {
             throw new Error('invalid key')
         }
 
-        // 设置之前尝试执行 extend 扩展散列表
+        // Try to extend the hash table before setting
         if (this.size / this.arr.length >= HIGH_WATER) {
             this.extend()
         }
 
-        // 定位槽位
-        // 因为前面执行了 extend，此处不可能返回 -1
+        // Locate slot
+        // Since extend was called before, this cannot return -1
         const slot = this.probeSlot(key, false)
-        // 插入到槽位中
+        // Insert into the slot
         this.arr[slot] = { key, val, isDel: false }
 
-        // 调整 size
+        // Adjust size
         this.size++
     }
 
     /**
-     * 根据 key 获取值
-     * 如果不存在则返回 undefined
+     * Get value by key
+     * Returns undefined if not found
      */
     public get(key: string): unknown {
         if (!key) {
@@ -146,7 +146,7 @@ class HashTable {
 
         const val = this.arr[slot]
         if (!val || val.isDel) {
-            // 槽位空（或已被删除）
+            // Slot is empty (or has been deleted)
             return undefined
         }
 
@@ -154,14 +154,14 @@ class HashTable {
     }
 
     /**
-     * 删除 key 对应的元素
+     * Remove element corresponding to key
      */
     public remove(key: string) {
         if (!key || !this.size) {
             return
         }
 
-        // 定位槽位
+        // Locate slot
         const slot = this.probeSlot(key, true)
 
         if (slot == -1) {
@@ -173,38 +173,38 @@ class HashTable {
             return
         }
 
-        // 标记删除
+        // Mark as deleted
         this.arr[slot].val = null
         this.arr[slot].isDel = true
         this.size--
 
-        // 收缩散列表
+        // Shrink hash table
         if (this.size / this.arr.length < LOW_WATER && this.arr.length > INIT_CAP) {
             this.shrink()
         }
     }
 
     /**
-     * 扩展散列表
+     * Extend hash table
      */
     private extend() {
-        // 扩展至两倍
+        // Extend to double
         this.rehash(this.arr.length << 1)
     }
 
     /**
-     * 收缩散列表
+     * Shrink hash table
      */
     private shrink() {
-        // 收缩至一半
+        // Shrink to half
         this.rehash(this.arr.length >> 1)
     }
 
     /**
-     * rehash
-     * 创建新数组，并将旧数组的元素迁移至新数组（需重新计算 hash）
-     * 注：实际中，需要迁移的数据可能非常多，如果一次迁移会导致程序卡顿，一般会采用增量迁移的方式，每次 set/remove 的时候迁移一部分。
-     * 增量迁移下，内部需要维护两个数组：oldArr 和 newArr，get、remove 都要先操作 oldArr，如果 oldArr 没找到，则操作 newArr
+     * Rehash
+     * Create a new array and migrate elements from the old array (requires recomputing hash)
+     * Note: In practice, the data to migrate may be very large. If migrating all at once causes lag, incremental migration is typically used, migrating a portion on each set/remove.
+     * With incremental migration, two arrays need to be maintained internally: oldArr and newArr. get and remove operate on oldArr first; if not found in oldArr, operate on newArr
      */
     private rehash(newCap: number) {
         const oldArr = this.arr
@@ -222,19 +222,19 @@ class HashTable {
     }
 
     /**
-     * 探查 key 所在的槽位
-     * 采用双重散列法：用两个 hash 函数，尽量实现均匀散列
-     * 当 slot 所在的位置为空或者是占位符则返回
+     * Probe the slot where key is located
+     * Uses double hashing: two hash functions to achieve uniform distribution
+     * Returns when the slot is empty or contains a placeholder
      * 
-     * @forExists - true 表示探查存在性（如果不存在则返回 -1），false 表示探查空位（全部位置都满则返回 -1）
-     * @returns 探查到的位置，没探查到则返回 -1
+     * @forExists - true means probe for existence (returns -1 if not found), false means probe for empty slot (returns -1 if all slots are full)
+     * @returns The probed position, returns -1 if not found
      */
     private probeSlot(key: string, forExists: boolean): number {
         const cap = this.arr.length
 
-        // 最多执行 i 次探查
+        // Probe at most i times
         for (let i = 0; i < cap; i++) {
-            // (i * this.hash2(key)) % cap 作为步长执行探查
+            // (i * this.hash2(key)) % cap as step size for probing
             const slot = (this.hash1(key) + i * this.hash2(key)) % cap
             if (
                 !forExists && (!this.arr[slot] || this.arr[slot].isDel) ||
@@ -252,20 +252,20 @@ class HashTable {
     }
 
     /**
-     * 为了能够探查整个散列表，hash2 返回值必须与散列表大小 n 互素（两者只有 1 这个公约数）
-     * 我们约定 m 总是 2 的次方数，则让 hash2 返回奇数即可。
+     * To probe the entire hash table, hash2 return value must be coprime with table size n (they share only 1 as common factor)
+     * We ensure m is always a power of 2, so hash2 just needs to return an odd number.
      */
     private hash2(key: string): number {
         return this.string2number(key, 11) | 1
     }
 
     /**
-     * 将字符串转成整型
+     * Convert string to integer
      */
     private string2number(key: string, factor: number): number {
         let total = 0;
         for (let i = 0; i < key.length; i++) {
-            total = (total + factor * total + key.charCodeAt(i)) >>> 0;// 转成正数
+            total = (total + factor * total + key.charCodeAt(i)) >>> 0;// Convert to positive number
         }
 
         return total

@@ -2,12 +2,12 @@ import assert from "assert"
 import { RedBlackTree, Node } from '../../src/data-structure/red-black-tree'
 
 /**
- * 创建一个测试用的类来检测红黑树类的正确性
- * 1. 从根到所有叶节点（null 节点）的路径上黑色节点数量相同
- * 2. 不存在两个连续的红节点
- * 3. 根节点是黑色
- * 4. 右子节点不能是黑色
- * 5. 高度至多为 2*lg(n+1)
+ * Create a test class to verify correctness of the Red-Black Tree
+ * 1. Same number of black nodes on all paths from root to leaf nodes (null nodes)
+ * 2. No two consecutive red nodes
+ * 3. Root node is black
+ * 4. Right child cannot be black
+ * 5. Height at most 2*lg(n+1)
  */
 class TestTree extends RedBlackTree {
     public isHeightValid(): boolean {
@@ -30,9 +30,9 @@ class TestTree extends RedBlackTree {
         }
 
         let rst = true
-        // 左子树
+        // Left subtree
         rst &&= this.dontHaveRightBlack(node.left)
-        // 右子树
+        // Right subtree
         rst &&= this.dontHaveRightBlack(node.right)
 
         return rst
@@ -49,7 +49,7 @@ class TestTree extends RedBlackTree {
             return false
         }
 
-        // 检查左右子树
+        // check left and right subtree
         let rst = true
         rst &&= this.dontHaveContinuousRedNode(node.left)
         rst &&= this.dontHaveContinuousRedNode(node.right)
@@ -85,28 +85,28 @@ class TestTree extends RedBlackTree {
             return true
         }
 
-        // 当前节点的 size 是否 ok
+        // check if current node's size is correct
         const ok = node.size === ((node.left ? node.left.size : 0) + (node.right ? node.right.size : 0) + 1)
         if (!ok) {
             console.log('curr:', node.size,'; left:', (node.left ? node.left.size : 0), '; right:', (node.right ? node.right.size : 0))
         }
 
-        // 需要自身、左子树、右子树都 OK
+        // need current node, left subtree, and right subtree all OK
         return ok && this.doesNodeSizeOK(node.left) && this.doesNodeSizeOK(node.right)
     }
 
     /**
-     * 计算子树 node 中到叶子节点的每条路径上黑色节点的数量并写入到 results 中
-     * currCnt 表示走到当前子树之前已经有的黑节点数量
+     * Calculate the number of black nodes on each path from subtree node to leaf nodes and write to results
+     * currCnt represents the count of black nodes already accumulated before reaching the current subtree
      */
     private countBlackNodes(node: Node | null, currCnt: number, results: number[]) {
         if (node === null) {
-            // 走到 null 节点（叶子节点），结束
+            // reached null node (leaf node), end
             results.push(currCnt + 1)
             return
         }
 
-        // 左右子树
+        // left and right subtree
         const cnt = node.color == 'BLACK' ? currCnt + 1 : currCnt
         this.countBlackNodes(node.left, cnt, results)
         this.countBlackNodes(node.right, cnt, results)
@@ -130,21 +130,21 @@ describe('red black tree', () => {
             [1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1],
         ]
-        // 生成 1~500 的数
+        // Generate numbers 1~500
         const a1 = []
         for (let i = 1; i <= 500; i++) {
             a1.push(i)
         }
         list.push(a1)
 
-        // 生成 500~1 的数
+        // Generate numbers 500~1
         const a2 = []
         for (let i = 500; i >= 1; i--) {
             a2.push(i)
         }
         list.push(a2)
 
-        // 生成随机数
+        // Generate random numbers
         const a3 = []
         for (let i = 0; i < 500; i++) {
             a3.push(Math.floor(Math.random() * 1000000))
@@ -155,7 +155,7 @@ describe('red black tree', () => {
             const tree = new TestTree()
             assert.equal(tree.size(), 0)
 
-            // 逐步插入，能保证红黑性质
+            // Step-by-step insertion maintains red-black properties
             for (const key of arr) {
                 tree.insert(key, key)
                 commonAssert(tree)
@@ -166,13 +166,13 @@ describe('red black tree', () => {
             assert.equal(tree.size(), arr.length)
             commonAssert(tree)
 
-            // 中序遍历
+            // inorder traversal
             const seqs = tree.inorderWalk()
             for (let i = 1; i < seqs.length; i++) {
                 assert.ok(seqs[i-1].key <= seqs[i].key)
             }
 
-            // 逐步删除，能保证红黑性质
+            // Step-by-step deletion maintains red-black properties
             for (const key of arr) {
                 tree.delete(key)
                 commonAssert(tree)
@@ -198,7 +198,7 @@ describe('red black tree', () => {
         assert.equal(tree.minimum().key, 1)
         assert.equal(tree.maximum().key, 190)
 
-        // 顺序统计量
+        // Order Statistics
         assert.equal(tree.osSelect(1).key, 1)
         assert.equal(tree.osSelect(2).key, 2)
         assert.equal(tree.osSelect(4).key, 5)

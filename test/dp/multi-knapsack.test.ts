@@ -3,7 +3,7 @@ import { knapsack, Goods } from '../../src/dp/multi-knapsack'
 
 describe('multi knapsack', () => {
     it('should ok', () => {
-        // 物品数组, 背包容量, 结果
+        // item array, knapsack capacity, result
         const list: [Goods[], number, number][] = [
             [[], 100, 0],
             [[{ v: 77, w: 92, c: 1 }, { v: 22, w: 22, c: 1 }, { v: 29, w: 87, c: 1 }], 0, 0],

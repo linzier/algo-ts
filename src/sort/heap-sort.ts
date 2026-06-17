@@ -1,40 +1,42 @@
 /**
- * 堆排序
- * 使用大顶堆实现升序排序（小顶堆实现降序排序）
- * 原址排序
- * 时间复杂度：O(n*lgn)
- * 
- * 基于大顶堆的性质：堆顶元素总是整个堆中最大的。
- * 
- * 步骤：
- *  1. 将堆顶元素和堆尾元素互换，同时堆元素数量减 1（即换到堆尾的元素不再算作堆元素）；
- *  2. 对新堆顶执行 heapify；
- *  3. 循环执行步骤1、2，直到堆中只剩一个元素（最后一个元素不需要交换了）；
- * 其实就是不断从数组剩余元素中取最大的，从数组末尾自右向左依次排列。
+ * Heap Sort
+ * Use Max-Heap to implement ascending order Sort (Min-Heap implements descending order Sort)
+ * In-place sort
+ * Time complexity: O(n*lgn)
+ *
+ * Based on Max-Heap property: the top element of the heap is always the maximum in the entire heap.
+ *
+ * Steps:
+ *  1. Swap heap top element and heap tail element, meanwhile heap element count decreases by 1
+ *     (i.e., the element swapped to the heap tail is no longer counted as a heap element);
+ *  2. Perform heapify on the new heap top;
+ *  3. Loop executing steps 1, 2, until heap has only one element left (last element doesn't need swapping);
+ * Actually it's continuously getting the maximum from the remaining array elements, arranging them from
+ * the array end towards the left sequentially.
  */
 
 import { Heap, Value } from '../data-structure/heap'
 
 class SortHeap extends Heap {
     /**
-     * 执行堆排序
+     * Perform Heap Sort
      */
     public sort() {
         let tmp: Value
         while (this._size > 1) {
-            // 将堆顶和堆尾元素交换
+            // Swap heap top and heap tail element
             tmp = this.data[1]
             this.data[1] = this.data[this._size]
             this.data[this._size] = tmp
 
-            // 堆元素数减一
+            // Heap element count decreases by one
             this._size--
 
-            // heapify
+            // Heapify
             this.heapify(1)
         }
 
-        // 因为建堆的时候我们向数组开头添加了一个元素，需要删掉
+        // Because when building the heap we added an element to the beginning of the array, need to remove it
         this.data.shift()
     }
 }

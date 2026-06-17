@@ -3,7 +3,7 @@ import { activitySelect, Activity } from '../../src/greedy/activity-select'
 
 describe('activity select', () => {
     it('should ok', () => {
-        // [活动数组, 选中的活动id数组][]
+        // [activity array, selected activity id array][]
         const list: [Activity[], number[]][] = [
             [[], []],
             [[{ id: 1, start: 2, end: 4 }], [1]],

@@ -1,25 +1,25 @@
 /**
- * 红黑树
- * 红黑树是二叉搜索树，是一种用来平衡二叉搜索树的方式
- * 具体来说，它实际上借鉴了 2-3 树（或 2-3-4 树）的思想，或者说是用二叉树来实现 2-3 树。
- * 我们这里实现的红黑树同《算法》中的（而不同于 《算法导论》中的），属于左倾红黑树（红节点只能在左边），其实是对 2-3 树的一种实现。
- * 具备如下性质：
- *  1. 每个节点，要么是红色的，要么是黑色的；
- *  2. 根节点是黑色的；
- *  3. 叶节点都是黑色的（注意这里说的叶节点不是树上真正的叶子节点，而是 null 节点，后面单独说明）；
- *  4. 如果一个节点是红色的，那么它的两个子节点一定都是黑色的（不能出现两个连续的红节点。对应到 2-3 树就是不能出现 4 节点）；
- *  5. 对于每个节点，从该节点到其所有后代叶节点的简单路径上，均包含相同数量的黑节点（对应到 2-3 树就是从根到所有叶节点的简单路径长度相同）；
- *  6. 对于左倾红黑树来说，红色节点只能在左边；
+ * Red-Black Tree
+ * A red-black tree is a self-balancing binary search tree
+ * Specifically, it borrows from the idea of 2-3 trees (or 2-3-4 trees), essentially implementing a 2-3 tree using a binary tree.
+ * The red-black tree implemented here follows "Algorithms" (not "Introduction to Algorithms"), and is a left-leaning red-black tree (red nodes can only be on the left), which is essentially an implementation of a 2-3 tree.
+ * It has the following properties:
+ *  1. Every node is either red or black;
+ *  2. The root is black;
+ *  3. All leaf nodes are black (note: "leaf nodes" here are not actual leaf nodes but null nodes, explained separately below);
+ *  4. If a node is red, both its children must be black (no two consecutive red nodes allowed; in 2-3 tree terms, no 4-nodes);
+ *  5. For every node, all simple paths from that node to its descendant leaf nodes contain the same number of black nodes (corresponding to equal path lengths from root to all leaves in a 2-3 tree);
+ *  6. For left-leaning red-black trees, red nodes can only be on the left;
  * 
- * 在代码注释中我们用 (a) 表示红色节点，用 <a> 表示黑色节点，用 [a] 表示不知道是红还是黑的节点，a 表示子树（a 有可能是 null）。
+ * In code comments we use (a) for red nodes, <a> for black nodes, [a] for nodes of unknown color, where a represents a subtree (a may be null).
  * 
- * 对性质 3 的说明：
- *  红黑树中所说的叶节点并不是我们通常意义上理解的叶子节点，而是专指 null 节点（或叫 nil 节点），原因如下。
- *  比如有个节点 node = { key: 123, val: 'abc', left: null, right: null }，
- *  在红黑树中，这个 node 并不是叶节点，这里的 node.left 和 node.right 才是叶节点（都是 null）。
- *  也就是说，红黑树中的叶节点仅仅起哨兵的作用。
- *  为何做如此定义？
- *  如图：
+ * Explanation of property 3:
+ *  Leaf nodes in red-black trees are not what we typically understand as leaf nodes, but specifically refer to null nodes (or nil nodes), for the following reason.
+ *  For example, a node = { key: 123, val: 'abc', left: null, right: null },
+ *  In a red-black tree, this node is not a leaf node; node.left and node.right are the leaf nodes (both null).
+ *  That is, leaf nodes in a red-black tree serve only as sentinels.
+ *  Why this definition?
+ *  As shown:
  *                      |
  *                     <a>
  *                  /       \
@@ -28,23 +28,23 @@
  *             <d>    <e>  nil  nil
  *            /   \   /  \
  *          nil  nil nil nil
- * 上图中，从节点 a 到所有的 nil 节点构成的简单路径上，黑色节点数量相同（nil 节点也是黑色节点）。
- * 如果我们不加入 nil 节点，而是将树本身的末端节点视为叶子节点，会怎样呢？
- * 此时，我们尝试删掉节点 <e>。删除后，原本 a->e 构成的简单路径直接消失了，那么整棵树剩下的所有路径的黑节点数量仍然相同，所以我们可以说我们
- * 删掉了一棵黑色节点 <e> 却并没有破坏红黑树性质————但这显然是不对的（和 2-3 树比较着看更能发现问题所在）。
- * 加入 null(图中的 nil) 节点后，我们再删 <e>，就会发现 e 所在的两条路径都比别的路径少了一个黑色节点，破坏了红黑树性质。
+ * In the figure above, all simple paths from node a to all nil nodes contain the same number of black nodes (nil nodes are also black).
+ * What if we don't add nil nodes and instead treat the tree's terminal nodes as leaf nodes?
+ * In this case, if we delete node <e>, the simple path a->e disappears entirely. The remaining paths still have the same black node count, so we could say we
+ * deleted a black node <e> without violating red-black tree properties -- but this is clearly wrong (comparing with 2-3 trees makes this more apparent).
+ * After adding null (nil in the figure) nodes, when we delete <e>, we find that the two paths through e have one fewer black node than other paths, violating the red-black property.
  * 
- * 红黑树性质的维护主要就是通过左右旋和颜色反转来实现。
- * 在下面定义的三个核心操作方法：rotateLeft、rotateRight、flipColors 都不会改变子树 h 的红黑性质（除了 h 本身的颜色除外）。
- * 之所以限制只有左子节点才能是红色（左倾），从后面的实现（特别是删除）可发现，让右节点永远是黑色能大大简化问题复杂度。
+ * Red-black tree properties are maintained primarily through left/right rotations and color flips.
+ * The three core operations defined below: rotateLeft, rotateRight, flipColors, do not change the red-black properties of subtree h (except possibly h's own color).
+ * The restriction that only left children can be red (left-leaning), as seen in the implementation below (especially deletion), greatly simplifies the problem complexity by keeping right children always black.
  * 
- * 左倾红黑树中最小节点一定没有任何孩子节点，因为最小节点如果有孩子节点，那一定是只有一个右子节点，但每当我们往右子节点添加一个新的红
- * 节点后，立马需要执行左旋让它变成左倾了。
- * 最大节点最多有一个左红子节点。
+ * In a left-leaning red-black tree, the minimum node never has any children, because if it had children, it would only have a right child, but whenever we add a new red
+ * right child, a left rotation is immediately needed to make it left-leaning.
+ * The maximum node has at most one red left child.
  * 
- * 顺序统计量：
- * 可以用红黑树在 O(logn) 复杂度上实现顺序统计量，参见 osSelect 和 osRank 方法实现。
- * 另外，可以通过快排实现 O(n) 复杂度的顺序统计量，参见 sort/order-statistic.ts
+ * Order statistics:
+ * Order statistics can be implemented with O(logn) complexity using a red-black tree; see osSelect and osRank methods.
+ * Additionally, O(n) complexity order statistics can be implemented via quicksort; see sort/order-statistic.ts
  */
 
 import assert from "assert"
@@ -55,24 +55,24 @@ interface Value {
 }
 
 /**
- * 定义树的节点
+ * Define tree node
  */
 interface Node extends Value {
     left: Node | null;
     right: Node | null;
     color: 'RED' | 'BLACK';
-    // 以该节点为根的子树中包含多少个节点（包括该节点），用以实现顺序统计功能
-    // 公式：node.size = node.left.size + node.right.size + 1
+    // Number of nodes in the subtree rooted at this node (including itself), used for order statistics
+    // Formula: node.size = node.left.size + node.right.size + 1
     size: number;
 }
 
 /**
- * 红黑树
- * 为方便起见，这里限制 key 是 number 类型，另外对于查找和删除仅操作第一个匹配的节点
+ * Red-Black Tree
+ * For convenience, key is restricted to number type, and search/delete only operate on the first matching node
  */
 class RedBlackTree {
     protected root: Node | null
-    // 树节点数量
+    // Number of tree nodes
     protected _size: number
 
     public constructor() {
@@ -85,23 +85,23 @@ class RedBlackTree {
     }
 
     /**
-     * 树高度
-     * 用求最大深度的方式求高度
+     * Tree height
+     * Calculate height by finding maximum depth
      */
     public height(): number {
         return this.innerDepth(this.root, 0)
     }
 
     /**
-     * 计算 root 子树的最大深度
-     * currDepth 表示 root 所处的深度
+     * Calculate the maximum depth of the subtree rooted at root
+     * currDepth represents the depth at which root is located
      */
     protected innerDepth(root: Node | null, currDepth: number): number {
         if (!root || !root.left && !root.right) {
             return currDepth
         }
 
-        // 分别计算左右子树的高度，取最大的
+        // Calculate heights of left and right subtrees, take the maximum
         const leftDepth = this.innerDepth(root.left, currDepth + 1)
         const rightDepth = this.innerDepth(root.right, currDepth + 1)
 
@@ -109,10 +109,10 @@ class RedBlackTree {
     }
 
     /**
-     * 让节点 h 相对于 h.right 执行左旋
-     * 左旋不会改变任何路径上黑节点的数量
-     * 该操作能保证 h 子树中所有节点的 size 属性能正确更新
-     * 左旋之前：h 可能是红色或者黑色；h.right（设为 x） 是红色；
+     * Left rotate node h relative to h.right
+     * Left rotation does not change the number of black nodes on any path
+     * This operation ensures all nodes' size properties in subtree h are correctly updated
+     * Before rotation: h may be red or black; h.right (let it be x) is red;
      *                   |
      *                  [h]
      *                 /   \
@@ -120,16 +120,16 @@ class RedBlackTree {
      *                     /   \
      *                    b     c
      * 
-     * 左旋之后：x 变成了原来 h 的颜色（因为站到 h 原来的位置了），h 变成红色；
+     * After rotation: x takes h's original color (since it takes h's position), h becomes red;
      *                   |
      *                  [x]
      *                 /   \
      *               (h)    c
      *              /   \
      *             a     b
-     * 注意：代码实现中并没有将 p 的父节点的左/右指针指向 x，因为我们没有维护父指针，代码是通过递归实现的（如果用循环实现，则需要父指针）
-     * @param h - 需要执行左旋的节点
-     * @returns 返回左旋后上面的那个节点 x 以供递归处理
+     * Note: The implementation does not update p's parent's left/right pointer to x, since we don't maintain parent pointers; the code uses recursion (iterative implementation would need parent pointers)
+     * @param h - Node to left-rotate
+     * @returns The upper node x after left rotation for further recursive processing
      */
     protected rotateLeft(h: Node): Node {
         assert(h && h.right)
@@ -141,7 +141,7 @@ class RedBlackTree {
         x.color = h.color
         h.color = 'RED'
 
-        // 更新 size
+        // Update size
         this.updateSize(h)
         this.updateSize(x)
 
@@ -149,10 +149,10 @@ class RedBlackTree {
     }
 
     /**
-     * 让节点 h 相对于 h.left 执行右旋
-     * 右旋不会改变任何路径上黑节点的数量
-     * 该操作能保证 h 子树中所有节点的 size 属性能正确更新
-     * 右旋前：h 可能是红色或者黑色，h.left（x）是红色。
+     * Right rotate node h relative to h.left
+     * Right rotation does not change the number of black nodes on any path
+     * This operation ensures all nodes' size properties in subtree h are correctly updated
+     * Before rotation: h may be red or black, h.left (x) is red.
      *                |
      *               [h]
      *              /   \
@@ -160,7 +160,7 @@ class RedBlackTree {
      *           /   \
      *          a     b
      * 
-     * 右旋后：x 变成 h 的颜色，h 变成红色；
+     * After rotation: x takes h's color, h becomes red;
      *                |
      *               [x]
      *              /   \
@@ -168,8 +168,8 @@ class RedBlackTree {
      *                 /   \
      *                b     c   
      * 
-     * @param h - 需要执行右旋的节点
-     * @returns 返回上面的节点 x
+     * @param h - Node to right-rotate
+     * @returns The upper node x
      */
     protected rotateRight(h: Node): Node {
         assert(h && h.left)
@@ -181,7 +181,7 @@ class RedBlackTree {
         x.color = h.color
         h.color = 'RED'
 
-        // 更新 size
+        // Update size
         this.updateSize(h)
         this.updateSize(x)
 
@@ -189,18 +189,18 @@ class RedBlackTree {
     }
 
     /**
-     * 翻转颜色
-     * 翻转颜色不会改变黑高，因而要求：x 和 y 的颜色必须相同，且和 h 的颜色相反。
+     * Flip colors
+     * Flipping colors does not change black height, thus requiring: x and y must have the same color, opposite to h's color.
      * 
-     * （如下以 x、y 是红色、h 是黑色为例）
-     * 翻转前：h.color = 'BLACK'; h.left.color = 'RED'; h.right.color = 'RED';
+     * (Below uses x, y as red and h as black as an example)
+     * Before flip: h.color = 'BLACK'; h.left.color = 'RED'; h.right.color = 'RED';
      *                   |
      *                  <h>
      *                 /   \
      *               (x)    (y)
      *              /   \  /   \
      * 
-     * 翻转后：h.color = 'RED'; h.left.color = 'BLACK'; h.right.color = 'BLACK';
+     * After flip: h.color = 'RED'; h.left.color = 'BLACK'; h.right.color = 'BLACK';
      *                   |
      *                  (h)
      *                 /   \
@@ -223,8 +223,8 @@ class RedBlackTree {
     }
 
     /**
-     * 判断节点 node 是否为红色
-     * 规定 null 节点是黑色
+     * Check if node is red
+     * null nodes are defined as black
      */
     protected isRed(node: Node | null): boolean {
         if (!node) {
@@ -235,11 +235,11 @@ class RedBlackTree {
     }
 
     /**
-     * 插入元素
-     * 从根节点往下找，直到找到合适的位置后插入
+     * Insert element
+     * Search from root downward until finding the right position
      * 
-     * @param key - 关键字
-     * @param val - 卫星数据
+     * @param key - the key
+     * @param val - satellite data
      */
     public insert(key: number, val: unknown) {
         this.root = this.innerInsert(this.root, { key, val })
@@ -248,12 +248,12 @@ class RedBlackTree {
     }
 
     /**
-     * 递归地往 p 子树插入元素 value，并维护红黑树性质
-     * 红黑树的维护：
-     * 我们考察子树 p，分三种情况：
-     * （注意我们在考察子树 p 时，不用考虑 p 自己的颜色，因为当我们考察 p 的父节点的时候，自然会去考察 p）
-     *  我们用 curr 指向当前正在考察的节点。
-     *  1. curr 的右节点是红色，左节点是黑色，违反“左倾”原则：执行左旋变成左倾即可；
+     * Recursively insert element value into subtree p, maintaining red-black properties
+     * Red-black property maintenance:
+     * We examine subtree p in three cases:
+     * (Note: when examining subtree p, we don't consider p's own color, because when we examine p's parent, p will naturally be examined)
+     *  We use curr to point to the node currently being examined.
+     *  1. curr's right node is red, left node is black, violating the “left-leaning” principle: execute left rotation to make it left-leaning;
      *              |                             |
      *     curr -> [p]                   curr -> [y]
      *           /     \                       /     \
@@ -262,9 +262,9 @@ class RedBlackTree {
      *        a   b   c   d               <x>   c
      *                                   /   \
      *                                  a     b
-     *     处理结束后，curr 指针指向新子树根。
-     *     注意：该场景下，我们不知道旋转后 y 的颜色是什么，如果是黑色则 OK，否则在下一轮递归处理时会继续处理它，所以不用担心。
-     *  2. 考察并处理完毕场景 1 后，curr.left 和 curr.left.left 都是红色：此时我们对 curr 执行右旋，转成情况 3;
+     *     After processing, curr pointer points to the new subtree root.
+     *     Note: In this case, we don't know y's color after rotation. If it's black, it's fine; otherwise it will be handled in the next recursion, so no worries.
+     *  2. After examining and handling case 1, if curr.left and curr.left.left are both red: execute right rotation on curr, converting to case 3;
      *                      |                               |
      *             curr -> [p]                     curr -> [x]
      *                    /   \                          /     \
@@ -274,17 +274,17 @@ class RedBlackTree {
      *              /
      *             a
      *      
-     *      注意：经过场景 2 的变换（右旋）后，变成场景 3，而场景三会执行颜色翻转操作，而翻转操作要求 x 和 p、y 的颜色不同，这里
-     *           y、p 是红色，就要求 x 一定是黑色，所以我们要先证明 x 一定不是红色（否则现在就有三个红色节点，无法执行翻转）。
-     *           我们考察一下本轮操作前子树的情况（左边的图）：
-     *           由于我们的操作是自下而上递归处理的，所以在我们本轮处理之前，不可能有任何操作变更 curr（也就是 p）的颜色，也就是说，
-     *           p 现在的颜色在插入新元素之前是符合红黑树规定的（因为在插入 value 之前整个树一定是合法的红黑树）；
-     *           另外，x 和 y 现在都是红色，不符合红黑树规定，说明 x 或者 y 的颜色一定是上一步操作导致的。那么，现在的问题是：上一步
-     *           操作是将 x 和 y 都变成了红色呢，还是只将 x 或者 y 中的一个变成了红色？
-     *           我们的操作只有左旋、右旋和颜色翻转（而且每轮各操作最多只会执行一次），这三种操作都不可能将一个节点和他的左子节点同时变成红色。
-     *           所以，在上一步变换之前，p 位置的左子节点一定是红色的，所以 p 位置一定是黑色的（因为变换之前 p 位置和它的左子节点的颜色
-     *           是符合红黑树规定的）。
-     *  3. 考察并处理完成场景 2 后，curr.color 是黑色，curr.left.color 和 curr.right.color 都是红色：执行颜色翻转;
+     *      Note: After case 2 transformation (right rotation), it becomes case 3, which executes color flip. The flip operation requires x and p, y to have different colors. Here
+     *           y and p are red, so x must be black. We first need to prove x cannot be red (otherwise there would be three red nodes and flip would be impossible).
+     *           Let's examine the subtree state before this operation (left figure):
+     *           Since our operations are processed bottom-up recursively, before this round, no operation could have changed curr's (i.e., p's) color, meaning
+     *           p's current color conforms to red-black tree rules before inserting the new element (since the entire tree was a valid red-black tree before inserting value);
+     *           Also, x and y are both red now, which violates red-black rules, meaning x or y's color must have been caused by the previous operation. The question is: did the previous
+     *           operation turn both x and y red, or only one of them?
+     *           Our operations are only left rotation, right rotation, and color flip (each at most once per round), and none of these can make a node and its left child both red simultaneously.
+     *           Therefore, before the previous transformation, p's left child must have been red, so p must have been black (because before the transformation, p and its left child's colors
+     *           conformed to red-black tree rules).
+     *  3. After examining and handling case 2, curr.color is black, curr.left.color and curr.right.color are both red: execute color flip;
      *                 |                               |
      *        curr -> <p>                     curr -> (p)
      *              /     \                         /     \
@@ -294,45 +294,45 @@ class RedBlackTree {
      * 
      * @param p 
      * @param value
-     * @returns 返回子树 p 新的根（插入并维护红黑性质后，新的根节点不一定还是原来的那个节点了）
+     * @returns Returns the new root of subtree p (after insertion and red-black property maintenance, the new root may not be the same node)
      */
     private innerInsert(p: Node | null, value: Value): Node {
         if (p === null) {
-            // p 子树是个空指针（空数），创建并返回新节点
+            // Subtree p is a null pointer (empty tree), create and return a new node
             return this.newNode(value.key, value.val)
         }
 
-        // p 是非空子树，则视情况将 value 插入到 p 的左子树或者右子树中
+        // Subtree p is non-empty, insert value into p's left or right subtree as appropriate
         if (value.key < p.key) {
             p.left = this.innerInsert(p.left, value)
         } else {
             p.right = this.innerInsert(p.right, value)
         }
 
-        // 更新 size
+        // Update size
         this.updateSize(p)
 
-        // 修复红黑性质
+        // Fix red-black properties
         return this.balance(p)
     }
 
     /**
-     * 对以 p 为根 的子树执行红黑平衡修复让该子树符合红黑树的性质
+     * Perform red-black balancing on subtree rooted at p to restore red-black properties
      * @param p
-     * @returns 修复完成后返回新的根
+     * @returns The new root after balancing
      */
     private balance(p: Node): Node {
-        // 情况一（右倾），执行左旋
+        // Case 1 (right-leaning), execute left rotation
         if (!this.isRed(p.left) && this.isRed(p.right)) {
             p = this.rotateLeft(p)
         }
 
-        // 情况二：连续两个左倾的红节点
+        // Case 2: two consecutive left-leaning red nodes
         if (this.isRed(p.left) && this.isRed(p.left.left)) {
             p = this.rotateRight(p)
         }
 
-        // 情况三：一个黑节点下面挂两个红节点，其中右边的红节点违反了“左倾”原则，通过翻转颜色解决
+        // Case 3: A black node has two red children, the right red node violates the “left-leaning” principle, resolved by flipping colors
         if (this.isRed(p.left) && this.isRed(p.right)) {
             this.flipColors(p)
         }
@@ -345,19 +345,19 @@ class RedBlackTree {
     }
 
     /**
-     * 删除树中最小节点
+     * Delete the minimum node from the tree
      * 
-     * 删除的逻辑：
-     * 对于左倾红黑树来说，最小节点一定没有任何孩子（唯一的右子节点被左旋掉了），所以如果该节点是红色的，那么直接删掉即可，不会改变
-     * 该路径上黑色节点数量，红黑树性质仍然保持。
-     * 但如果被删除的是黑色节点，则会导致相关路径上黑色节点数量减 1，进而破坏了红黑树的性质。
-     * 对于黑节点，有两种解决方案：
-     *  1. 删掉该黑节点，然后修复整棵树。该过程会很复杂；
-     *  2. 删之前先想办法将该节点变成红节点。此处正是采用此方案；
+     * Deletion logic:
+     * For a left-leaning red-black tree, the minimum node has no children (any right child would have been left-rotated away), so if the node is red, simply delete it without changing
+     * the number of black nodes on that path, maintaining red-black properties.
+     * But if the deleted node is black, it reduces the black node count on related paths by 1, violating red-black properties.
+     * For black nodes, there are two approaches:
+     *  1. Delete the black node, then fix the entire tree. This process would be very complex;
+     *  2. Find a way to turn the node red before deleting. This is the approach used here;
      * 
-     * 如何将某条路径末端的黑节点变成红节点？
-     * 对于如下一条从根到叶节点的简单路径：
-     * （省略了该树上其他节点）
+     * How to turn a black node at the end of a path into a red node?
+     * For the following simple path from root to leaf:
+     * (Other nodes on the tree are omitted)
      *                  h
      *                /
      *               a
@@ -369,24 +369,24 @@ class RedBlackTree {
      *                 .
      *                /
      *               x
-     * 为了将 x 从黑色变成红色，同时让这条路径上黑节点总数不变，可以采用颜色转移的策略：将这条路径上某个红节点的颜色依次
-     * 往下传递，最终传给 x，此时 x 变成红节点，原本那个红节点变成黑节点，整体黑节点数量不变。
-     * 这里有几个问题：
-     *  1. 如何进行颜色传递呢？执行颜色翻转（flipColors）操作即可，我们知道 flipColors 操作不会破坏任何路径上的红黑节点数量；
-     *  2. 颜色翻转操作会同时修改左右两个子节点的颜色，会导致右倾的红节点。我们在删除掉 x 节点后再自下而上执行一次 balance 即可；
-     *  3. 由于这条路径上的节点还会构建其他路径，在传递颜色的过程中可能会破坏其他路径上黑节点的数量。翻转后，视情况再执行一些旋转
-     *     等操作修复对其他路径的破坏；
-     *  4. 如果该路径上一个红节点都没有怎么办？可以将根节点变成红色。将根节点变成红色相当于将根到所有叶子节点的简单路径上的黑色节点
-     *     树都减 1，并没有破坏红黑树性质。实际上，我们从根开始处理的时候，并不知道这条路径后面到底有没有红色节点，所以当我们判断
-     *     root.left 是黑色时，即将 root 的颜色改成红色来保证至少有一个红色可用；
+     * To turn x from black to red while keeping the total black node count on this path unchanged, we can use a color transfer strategy: pass the color of some red node on this path
+     * downward, ultimately to x. Now x becomes red, the original red node becomes black, and the total black node count remains unchanged.
+     * There are several questions:
+     *  1. How to transfer color? Just execute color flip (flipColors), which we know doesn't break the red-black node count on any path;
+     *  2. Color flip modifies both children's colors simultaneously, potentially creating right-leaning red nodes. We can fix this by running balance bottom-up after deleting x;
+     *  3. Since nodes on this path also form other paths, transferring colors may break black node counts on other paths. After flipping, perform rotations as needed
+     *     to fix damage to other paths;
+     *  4. What if there are no red nodes on this path? We can make the root red. Making the root red is equivalent to reducing the black node count
+     *     on all simple paths from root to leaves by 1, without violating red-black properties. In practice, when we start from the root, we don't know if there will be red nodes later on the path, so when we determine
+     *     root.left is black, we change root's color to red to ensure at least one red node is available;
      */
     public deleteMin() {
         if (!this.root) {
             return
         }
 
-        // 当根节点的左子节点不是红色时，将根变成红色，为的是能够有红色节点往下沉
-        //（其实严谨点应该还要判断左孙子是否红色，不过不判断也没关系，就算最后根的红色没有下沉，最后再改成黑色即可）
+        // When root's left child is not red, make root red so there's a red node to push down
+        //(Strictly speaking, we should also check if the left grandchild is red, but it's fine without this check -- even if root's red doesn't sink down, we just change it back to black at the end)
         if (!this.isRed(this.root.left)) {
             this.root.color = 'RED'
         }
@@ -401,58 +401,58 @@ class RedBlackTree {
     }
 
     /**
-     * 删除子树 x 中最小节点，并修复红黑性质
-     * @returns 删除并修复后，返回该子树新的根（可能为 null，当子树为空时）
+     * Delete the minimum node from subtree x and restore red-black properties
+     * @returns After deletion and restoration, return the new root of the subtree (may be null if subtree is empty)
      */
     private innerDeleteMin(x: Node): Node | null {
-        // 当 x 没有左节点时（同时肯定也没有右节点），即是最小节点，通过 return null 节点给父节点来实现对该节点的删除
-        // 当处理到最小节点的时候，该节点一定已经是红色了（可能自身本来就是红色，可能是通过对父节点执行 moveRedLeft 转移下来的）
+        // When x has no left node (and thus definitely no right node either), it is the minimum node; delete it by returning null to the parent
+        // When processing reaches the minimum node, it must already be red (either originally red, or made red via moveRedLeft on the parent)
         if (!x.left) {
             return null
         }
 
         /**
-         * 否则继续处理左子树（即删除左子树中最小节点，以此递归）
-         * 在递归之前，我们要尝试将红色传递给下一个待处理的节点
-         * 注意：往下传递红色的前提是：该节点的左儿子和左孙子都必须是黑色的，否则一方面既然下方有红节点，自然没必要传上方
-         * 的红色了，另外在这种情况下传递下去会导致破坏红黑树规则（会导致两个相连的红节点出现）
+         * Otherwise continue processing the left subtree (i.e., delete the minimum node from the left subtree, recursively)
+         * Before recursion, we try to pass a red node down to the next node to process
+         * Note: The prerequisite for passing red downward is: the node's left child and left grandchild must both be black; otherwise, since there's already a red node below,
+         * there's no need to pass red from above, and passing it down in this case would violate red-black rules (causing two adjacent red nodes)
          */
         if (!this.isRed(x.left) && !this.isRed(x.left.left)) {
             x = this.moveRedLeft(x)
         }
 
-        // 递归处理 x.left
+        // Recursively process x.left
         x.left = this.innerDeleteMin(x.left)
 
-        // 更新 x.size
+        // Update x.size
         this.updateSize(x)
 
-        // 删除 x 后，执行 balance 操作（因为 moveRedLeft 可能导致出现右倾的红色节点）
-        // 第一次回溯的是 x 的父节点（而不是 x）
+        // After deleting x, execute balance (because moveRedLeft may create right-leaning red nodes)
+        // The first backtrack is to x's parent (not x itself)
         return this.balance(x)
     }
 
     /**
-     * 将顶点 x 的红色传递给 x 的左子节点，可能需要修复红黑性质
-     * 能够调此函数的前提是 x 必须是红色
-     * 该函数执行后，x.left 一定是红色的
-     * 注意：该操作可能会带来右倾的红节点，这是由翻转导致的，在此处无法解决（除非再翻转一遍，但这样的话红色就无法向下传递了），
-     * 此处不解决此问题，而是留给回溯阶段解决
+     * Transfer x's red color to x's left child, may need to restore red-black properties
+     * Prerequisite for calling this function: x must be red
+     * After this function executes, x.left is guaranteed to be red
+     * Note: This operation may create right-leaning red nodes due to the flip, which cannot be resolved here (unless we flip again, but then red can't propagate downward),
+     * this issue is left to the backtracking phase to resolve
      * 
-     * 注意：moveRedLeft 不会修改 x 的左子树的结构（但可能会修改右子树的结构），这很重要
-     * 该操作能保证 x 子树中所有节点的 size 能正确更新
+     * Note: moveRedLeft does not modify the structure of x's left subtree (but may modify the right subtree), this is important
+     * This operation ensures all nodes' size in subtree x can be correctly updated
      * 
-     * @returns 传递并修复后返回该子树新的根（可能不是原来那个了）
+     * @returns Return the new root of the subtree after transfer and restoration (may be different from the original)
      */
     private moveRedLeft(x: Node): Node {
         assert(x.left)
         assert(this.isRed(x) && !this.isRed(x.left) && !this.isRed(x.left.left))
 
-        // 既然 x 是红色，那么 x 的左右节点肯定都是黑色，执行翻转
+        // Since x is red, both its children must be black, execute flip
         this.flipColors(x)
 
         /**
-         * 翻转后可能会导致两个连续的红色节点出现：
+         * After flipping, two consecutive red nodes may appear:
          *               |                                 |
          *              (x)                               <x>
          *            /     \                           /     \
@@ -460,12 +460,12 @@ class RedBlackTree {
          *         /  \     /    \       -->         /   \    /   \ 
          *       <a>      (b)     <c>              <a>      (b)    <z>
          *      /   \    /  \    /   \            /   \    /   \  /   \
-         * 如上，翻转后 z 和 b 都是红色。
-         * 可以通过 z = rotateRight(z) -> x = rotateLeft(x) -> flipColors(x) 来解决。
+         * As above, after flipping both z and b are red.
+         * Can be resolved via z = rotateRight(z) -> x = rotateLeft(x) -> flipColors(x).
          */
         if (x.right && this.isRed(x.right.left)) {
             x.right = this.rotateRight(x.right)
-            // 先更新 x.size
+            // Update x.size first
             this.updateSize(x)
             x = this.rotateLeft(x)
             this.flipColors(x)
@@ -475,12 +475,12 @@ class RedBlackTree {
     }
 
     /**
-     * 删除数中最大节点
-     * 最大节点一定是黑色的（否则就违背了左倾原则），且其最多有一个红色左子节点（可以通过给某个没有任何子节点的最大节点添加子节点
-     * 来模拟证明此结论，经过三个修复操作处理后，其如果存在左子节点，则该子节点不可能是黑色的。）
-     * 思路和删除最小节点类似，也是从根节点开始向下传递红色节点，最终将待删除的节点变成红色然后删除，从而不影响路径上的黑色节点数
-     * 不同的是，最大节点在右侧，而且可能会存在一个左子节点。而左倾红黑树所有红色节点都在左边。所以要想沿最右侧路径传递红色，必须
-     * 对相关左倾的红色节点执行右旋。
+     * Delete the maximum node from the tree
+     * The maximum node must be black (otherwise it would violate the left-leaning principle), and it has at most one red left child (can be verified by adding children to a maximum node with no children
+     * and simulating -- after the three fix operations, if a left child exists, it cannot be black.)
+     * The approach is similar to deleting the minimum node: pass red nodes downward from the root, ultimately turning the target node red before deleting it, so the black node count on paths is unaffected
+     * The difference is that the maximum node is on the right and may have a left child. In a left-leaning red-black tree, all red nodes are on the left. So to pass red along the rightmost path, we must
+     * right-rotate the relevant left-leaning red nodes.
      */
     public deleteMax() {
         if (!this.root) {
@@ -488,7 +488,7 @@ class RedBlackTree {
         }
 
         if (!this.isRed(this.root.left)) {
-            // 如果根节点的左子节点是黑色，则将根变成红色，以便有一个红节点可以往下传递
+            // If root's left child is black, make root red so there's a red node to pass down
             this.root.color = 'RED'
         }
 
@@ -502,58 +502,58 @@ class RedBlackTree {
     }
 
     /**
-     * 删除 x 子树中最大节点，并返回删除并修复后的子树的新根
+     * Delete the maximum node from subtree x, return the new root after deletion and restoration
      */
     private innerDeleteMax(x: Node): Node | null {
-        // 如果左子节点是红色，则先执行右旋将该红色转移到右边
-        // 该操作还有个作用：当最大节点存在左子节点（一定是红色）时，通过右旋将该左子节点去掉，让要删除的节点无子节点，简化删除操作
+        // If the left child is red, right-rotate first to transfer the red to the right
+        // This operation also serves another purpose: when the maximum node has a left child (which must be red), right-rotating removes that left child, making the node to delete childless and simplifying deletion
         if (this.isRed(x.left)) {
             x = this.rotateRight(x)
         }
 
-        // 当 x 没有右节点时，便是最大的那个，执行删除
-        // 当操作 x 时，该节点一定已经是红色了（可能自身本来就是红色，可能是通过对父节点执行 moveRedRight 转移下来的）
+        // When x has no right child, it is the maximum, execute deletion
+        // When operating on x, this node must already be red (either originally red, or made red via moveRedRight on the parent)
         if (!x.right) {
             return null
         }
 
-        // x 存在右子节点，则递归处理右子树
-        // 递归之前，要将 x 的红色传递给右子节点
+        // x has a right child, recursively process right subtree
+        // Before recursion, transfer x's red to the right child
         if (!this.isRed(x.right) && !this.isRed(x.right.left)) {
             x = this.moveRedRight(x)
         }
 
-        // 递归处理右子节点
+        // Recursively process right child
         x.right = this.innerDeleteMax(x.right)
 
-        // 更新 x.size
+        // Update x.size
         this.updateSize(x)
 
-        // 删除后，执行 balance 恢复红黑树性质
-        // 因为 moveRedRight 的过程可能带来右倾的红节点
+        // After deletion, execute balance to restore red-black properties
+        // Because moveRedRight may create right-leaning red nodes
         return this.balance(x)
     }
 
     /**
-     * 将节点 x 的红色转移给它的右节点
-     * 前提：1. x 是红色；2. x.right 和 x.right.left 都是黑色
-     * （而且 x.left 也一定是黑色的，因为如果 x.left 是红色的，则前面会执行右旋将其变成黑色）
-     * 操作后，x.right 是红色。
+     * Transfer node x's red to its right child
+     * Prerequisites: 1. x is red; 2. x.right and x.right.left are both black
+     * (And x.left must also be black, because if x.left were red, a right rotation would have been performed earlier to make it black)
+     * After operation, x.right is red.
      * 
-     * 该操作不会修改 x 的右子树的结构。
+     * This operation does not modify the structure of x's right subtree.
      * 
-     * @returns 转移后子树新根
+     * @returns The new root of the subtree after transfer
      */
     private moveRedRight(x: Node): Node {
         assert(x.right)
         assert(this.isRed(x))
         assert(!this.isRed(x.right) && !this.isRed(x.right.left))
 
-        // 翻转颜色
+        // Flip colors
         this.flipColors(x)
 
         /**
-         * 翻转后，下面的情况会带来两个连续的红色节点（a 和 c），不符合红黑树性质，需要修正:
+         * After flipping, the following case creates two consecutive red nodes (a and c), violating red-black properties and needing correction:
          *              |                                    |
          *             (x)                                  <x>
          *           /     \                              /     \
@@ -561,7 +561,7 @@ class RedBlackTree {
          *        /   \     /  \                       /   \    /   \
          *      (c)   <d> <z>   <b>                  (c)   <d> <z>   <b>
          *     /  \   /  \                          /   \  /  \
-         * 修复操作：x = rotateRight(x) -> flipColors(x)
+         * Fix operation: x = rotateRight(x) -> flipColors(x)
          */
         if (this.isRed(x.left.left)) {
             x = this.rotateRight(x)
@@ -572,21 +572,21 @@ class RedBlackTree {
     }
 
     /**
-     * 删除关键字 key 所在的（第一个）节点
-     * 如果待删除的节点没有子节点，则变成红色后直接删除；
-     * 否则，和普通二叉搜索树一样，将该节点的后继节点的值复制过来，然后删除后继节点；
+     * Delete the (first) node with the given key
+     * If the node to delete has no children, turn it red then delete directly;
+     * Otherwise, like a regular BST, copy the successor's value to this node, then delete the successor;
      * 
-     * 和 deleteMin、deleteMax 的思想一致，也是从根节点开始往下探查，同时将红色往下传递，直到传给待删除的节点。
+     * Same idea as deleteMin and deleteMax: probe downward from root, passing red downward until it reaches the node to be deleted.
      * 
      * @param key
      */
     public delete(key: number) {
-        // 先看树中是否包含 key
+        // First check if the tree contains key
         if (!this.root || !this.searchNode(key)) {
             return
         }
 
-        // 如果root.left 不是红色，则将 root 改成红色，保证下探的过程中有红色节点往下转移
+        // If root.left is not red, change root to red to ensure a red node can be passed down during probing
         if (!this.isRed(this.root.left)) {
             this.root.color = 'RED'
         }
@@ -601,14 +601,14 @@ class RedBlackTree {
     }
 
     /**
-     * 删除子树 x 中第一个等于 key 的节点，并修复红黑树性质，返回子树新的根
+     * Delete the first node equal to key in subtree x, restore red-black properties, return the new root of the subtree
      */
     private innerDelete(x: Node, key: number): Node {
         if (key < x.key) {
             /**
-             * 待删除的节点在 x 的左边，由于前面判断了 key 一定存在，所以此时 x.left 一定存在
-             * 往左边下探之前，将红色传递下去（因为 moveRedLeft 不会修改左子树结构，所以是安全的）
-             * 可以证明，如果 x.left 和 x.left.left 都是黑色，那么 x 一定是红色
+             * The node to delete is in x's left subtree. Since we already verified key exists, x.left must exist
+             * Before going left, pass red downward (safe because moveRedLeft doesn't modify left subtree structure)
+             * It can be proven that if x.left and x.left.left are both black, then x must be red
              */
             if (!this.isRed(x.left) && !this.isRed(x.left.left)) {
                 x = this.moveRedLeft(x)
@@ -617,53 +617,53 @@ class RedBlackTree {
             x.left = this.innerDelete(x.left, key)
         } else {
             // key >= x.key
-            // 此时无论最终要不要往右边走，先判断一下，如果左子结点是红色，先执行右旋，将红色转到右边
+            // Regardless of whether we ultimately go right, first check: if the left child is red, right-rotate to transfer red to the right
             if (this.isRed(x.left)) {
                 x = this.rotateRight(x)
             }
 
-            // 只要存在右子节点，先把红色传下去
-            // 因为 moveRedRight 不会修改右子树的结构，所以该操作是安全的
+            // As long as right child exists, pass red down first
+            // Safe because moveRedRight doesn't modify right subtree structure
             if (x.right && !this.isRed(x.right) && !this.isRed(x.right.left)) {
                 x = this.moveRedRight(x)
             }
             
             if (key === x.key) {
                 /**
-                 * 当前节点就是要删除的节点，有两种情况
-                 * 情况一：当前节点没有右子节点，可以证明该节点也一定没有左子节点，此时直接删除即可（此时当前节点一定已经变成了红色）。
+                 * Current node is the one to delete, two cases:
+                 * Case 1: Current node has no right child. It can be proven it also has no left child. Delete directly (current node must already be red at this point).
                  * (
-                 *  因为在左倾红黑树中，如果一个节点没有右子节点，那么如果它有左子结点，其左子节点一定是红色，
-                 *  且该左子结点不能再有任何子节点，否则不满足红黑树要求。
-                 *  而对于红色左子节点，前面执行了右旋，会跑到右边。
-                 * 情况二：当前节点有右子节点，则要先从右子树中找到当前节点的后继节点，将其内容复制过来，然后删掉该后继节点。
+                 *  In a left-leaning red-black tree, if a node has no right child and has a left child, that left child must be red,
+                 *  and that left child cannot have any children, otherwise red-black tree requirements are violated.
+                 *  And for a red left child, a right rotation was performed earlier, moving it to the right.
+                 * Case 2: Current node has a right child. Find the successor in the right subtree, copy its content here, then delete the successor.
                  * )
                  */
                 if (!x.right) {
                     return null
                 }
 
-                // 有右子节点，找到后继，将内容复制过来
+                // Has right child, find successor, copy its content
                 const postNode = this.minimum(x.right)
                 x.key = postNode.key
                 x.val = postNode.val
 
-                // 删除后继节点（也就是右子树中最小节点）
+                // Delete successor (the minimum node in right subtree)
                 x.right = this.innerDeleteMin(x.right)
             } else {
-                // key 比当前节点大，需要继续到右子树中找
+                // key is larger than current node, continue searching in right subtree
                 x.right = this.innerDelete(x.right, key)
             }
         }
 
         this.updateSize(x)
 
-        // 删除完毕，从下往上（回溯）执行 balance
+        // Deletion complete, execute balance bottom-up (backtracking)
         return this.balance(x)
     }
 
     /**
-     * 根据关键字 key 查找第一个匹配的元素，返回对应的 val。如果没找到则返回 undefined 
+     * Search for the first matching element by key, return its val. Returns undefined if not found 
      */
     public search(key: number): unknown {
         const node = this.searchNode(key)
@@ -672,13 +672,13 @@ class RedBlackTree {
     }
 
     /**
-     * 根据关键字 key 查找第一个匹配的元素，返回对应的 Node。如果没找到则返回 null
-     * 此处采用非递归写法
+     * Search for the first matching element by key, return the corresponding Node. Returns null if not found
+     * Uses iterative approach here
      */
     public searchNode(key: number): Node | null {
         let curr = this.root
         while (curr && curr.key !== key) {
-            // curr 存在且 key 不相同，则视情况去左子树或者右子树找
+            // curr exists and key does not match, search in left or right subtree accordingly
             if (key < curr.key) {
                 curr = curr.left
             } else {
@@ -690,10 +690,10 @@ class RedBlackTree {
     }
 
     /**
-     * 中序遍历
-     * 先打印左子树，再打印自己，最后打印右子树（所谓“中”即是在中间打印自己）
-     * 中序遍历可以实现排序
-     * 示例树的中序遍历：2, 3, 4, 6, 7, 9, 13, 15, 17, 18, 20
+     * In-order traversal
+     * Print left subtree first, then self, then right subtree (so-called “in” means self is printed in the middle)
+     * In-order traversal can implement sorting
+     * In-order traversal of example tree: 2, 3, 4, 6, 7, 9, 13, 15, 17, 18, 20
      */
     public inorderWalk(): Node[] {
         const arr: Node[] = []
@@ -707,19 +707,19 @@ class RedBlackTree {
             return
         }
 
-        // 先输出左子树
+        // Output left subtree first
         this.inorder(x.left, arr)
-        // 自身
+        // Self
         arr.push(x)
-        // 右子树
+        // Right subtree
         this.inorder(x.right, arr)
     }
 
     /**
-     * 先序遍历
-     * 先打印自身，再打印左节点，最后打印右子树
-     * 先序遍历反映了一种构成此树结构的插入顺序
-     * 示例树的先序遍历：15, 6, 3, 2, 4, 7, 13, 9, 18, 17, 20
+     * Pre-order traversal
+     * Print self first, then left node, then right subtree
+     * Pre-order traversal reflects an insertion order that constructs this tree structure
+     * Pre-order traversal of example tree: 15, 6, 3, 2, 4, 7, 13, 9, 18, 17, 20
      */
     public preorderWalk(): Node[] {
         const arr: Node[] = []
@@ -733,18 +733,18 @@ class RedBlackTree {
             return
         }
 
-        // 自身
+        // Self
         arr.push(x)
-        // 左子树
+        // Left subtree
         this.preorder(x.left, arr)
-        // 右子树
+        // Right subtree
         this.preorder(x.right, arr)
     }
 
     /**
-     * 后序遍历
-     * 先打印左子树，再打印右子树，最后打印自身
-     * 示例树的后序遍历：2, 4, 3, 9, 13, 7, 6, 17, 20, 18, 15
+     * Post-order traversal
+     * Print left subtree first, then right subtree, then self
+     * Post-order traversal of example tree: 2, 4, 3, 9, 13, 7, 6, 17, 20, 18, 15
      */
     public postorderWalk(): Node[] {
         const arr: Node[] = []
@@ -758,18 +758,18 @@ class RedBlackTree {
             return
         }
 
-        // 左子树
+        // Left subtree
         this.postorder(x.left, arr)
-        // 右子树
+        // Right subtree
         this.postorder(x.right, arr)
-        // 自身
+        // Self
         arr.push(x)
     }
 
     /**
-     * 获取以 root 为根的子树中最小元素
-     * 不断获取左孩子节点，直到某个元素没有左孩子节点为止
-     * 示例树的最小值是 2
+     * Get the minimum element in the subtree rooted at root
+     * Keep getting the left child until a node has no left child
+     * The minimum of the example tree is 2
      */
     public minimum(root?: Node): Node | null {
         let curr = root || this.root
@@ -781,9 +781,9 @@ class RedBlackTree {
     }
 
     /**
-     * 获取以 root 为根的子树中最大元素
-     * 不断获取右孩子节点，直到某个元素没有右孩子节点为止
-     * 示例树的最大值是 20
+     * Get the maximum element in the subtree rooted at root
+     * Keep getting the right child until a node has no right child
+     * The maximum of the example tree is 20
      */
     public maximum(root?: Node): Node | null {
         let curr = root || this.root
@@ -795,8 +795,8 @@ class RedBlackTree {
     }
 
     /**
-     * 顺序统计：返回树中第 i 小的节点
-     * @param i - 从 1 开始
+     * Order statistic: return the i-th smallest node in the tree
+     * @param i - Starting from 1
      */
     public osSelect(i: number): Node | null {
         if (i > this._size) {
@@ -807,15 +807,15 @@ class RedBlackTree {
     }
 
     /**
-     * 返回 x 子树中第 i 小的节点
-     * x 节点是 x 子树中第 x.left.size + 1 小的节点
+     * Return the i-th smallest node in subtree x
+     * Node x is the (x.left.size + 1)-th smallest node in subtree x
      */
     private innerOsSelect(x: Node, i: number): Node {
         if (!x) {
             return null
         }
 
-        // x 节点在子树中的位置
+        // Position of node x in the subtree
         const pos = x.left ? x.left.size + 1 : 1
 
         if (i === pos) {
@@ -823,19 +823,19 @@ class RedBlackTree {
         }
 
         if (i < pos) {
-            // x 的位置大于 i，则去 x 的左子树中查找
+            // x's position is greater than i, search in x's left subtree
             return this.innerOsSelect(x.left, i)
         }
 
-        // 到右子树中查找，注意此时在右子树中要查找的是 i - pos 小的节点
+        // Search in the right subtree; note that in the right subtree, we search for the (i - pos)-th smallest node
         return this.innerOsSelect(x.right, i - pos)
     }
 
     /**
-     * 顺序统计：返回节点 x 在树中按中序遍历所在的位置（从 1 开始计算）。如果不存在，则返回 -1
-     * 我们将树形结构展开为有序数组：...... | ...... | ...x...|......，由一系列子数组构成，要求的 x 的位置，
-     * 需先求出 x 在其子数组（子树）中的位置，然后加上该子数组在整个数组中的偏移量。
-     * @param x - 节点
+     * Order statistic: return the in-order position of node x in the tree (starting from 1). Returns -1 if not found
+     * We unfold the tree structure into a sorted array: ...... | ...... | ...x...|......, composed of subarrays. To find x's position,
+     * we first find x's position in its subarray (subtree), then add the subarray's offset in the overall array.
+     * @param x - the node
      */
     public osRank(x: Node): number {
         if (!this.root) {
@@ -846,21 +846,21 @@ class RedBlackTree {
     }
 
     /**
-     * 求节点 x 在 root 子树中的位置
+     * Find the position of node x in subtree rooted at root
      */
     private innerOsRank(root: Node, x: Node): number {
         if (root === x) {
-            // root 就是 x 自身，直接返回
+            // root is x itself, return directly
             return root.left ? root.left.size + 1 : 1
         }
 
         if (x.key < root.key) {
-            // x 比 root 小，到 root 的左子树查找
+            // x is smaller than root, search in root's left subtree
             return this.innerOsRank(root.left, x)
         }
 
-        // x >= root，去右边查
-        // 去右边查的时候，需要加上 root 节点在树中的位置（因为右子树中元素的位置是相对于 root 的）
+        // x >= root, search on the right
+        // When searching right, add root's position in the tree (since positions in the right subtree are relative to root)
         return (root.left ? root.left.size + 1 : 1) + this.innerOsRank(root.right, x)
     }
 }

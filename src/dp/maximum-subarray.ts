@@ -1,33 +1,39 @@
 /**
- * 最大子数组（又称为最大子序和）
- * 动态规划算法。时间复杂度：O(n)
- * 
- * 问题描述：
- * 给定一个整数数组 A，找到一个具有最大和的连续子数组（子数组最少包含一个元素），并返回其最大和。
- * 如：A = [-2, 1, -3, 4, -1, 2, 1, -5, 4]，最大子数组为 [4, -1, 2, 1]，和为 6。
- * 
- * 求解思路：
- *  1. 对于数组 A = [a1, a2, ... an]，设其最大子数组 S = A[i:j]，
- *     我们将关注点放在子数组右边界 j 上。
- *     S 亦是数组 A 中“以 j 作为右边界的”最大子数组。
- *  2. 接下来我们以动态规划的思维方式思考，看这个 S 能否通过它的前驱（即“以 j-1 作为右边界”的最大子数组）来求解：
- *     假定我们知道 A 中“以 j-1 作为右边界”的最大子数组是 S'（设为 A[k:j-1]），那能否通过 S' 和 A[j] 求得 S 呢？
- *     可以的，存在如下两种情况：
- *       1. 如果 sum(S') + A[j] > A[j]，则将 A[j] 加入 S' 中即得到 S（此时 S = A[k:j]）；
- *       2. 反之，则由 A[j] 一个元素单独构成 S（此时 S = A[j:j]）；
- *       总之，S = max(S'+A[j], A[j])。
- *  3. 既然能够通过 j-1 求解 j，而初始值又很容易求得（A[0:0] 的最大子数组是它自身），那么就可以用动态规划“滚动式”地求解 S 了；
- *  4. 不过还剩下一个问题，我们之前设定 A 的最大子数组是 S = A[i:j]，但我们并不知道这个右边界 j 到底是多少。
- *     不过，既然我们能够通过 j-1 的解推导 j 的解，那我们就可以通过初始值（A[0]）推导出分别以 0~n 作为右边界的最大子数组，
- *     那个 j 一定在 0~n 之间。然后我们取出其中和最大的那个即可。
- * 
- * 这里的关键是将“最大子数组”的概念转变为“以 j 为右边界的最大子数组”（前者属于后者的一个子集，求出全集后，通过比较即可得到最终解）。
+ * Maximum Subarray (also known as Maximum Subarray Sum)
+ * Dynamic programming algorithm. Time complexity: O(n)
+ *
+ * Problem description:
+ * Given an integer array A, find a contiguous subarray with the maximum sum (subarray must contain at least one element), and return its maximum sum.
+ * For example: A = [-2, 1, -3, 4, -1, 2, 1, -5, 4], maximum subarray is [4, -1, 2, 1], sum is 6.
+ *
+ * Solution approach:
+ *  1. For array A = [a1, a2, ... an], let its maximum subarray be S = A[i:j],
+ *  we focus our attention on the subarray's right boundary j.
+ *  S is also the “maximum subarray with j as right boundary” in array A.
+ *  2. Next we think in a dynamic programming way, to see if S can be solved through its predecessor
+ *     (i.e., the “maximum subarray with j-1 as right boundary”):
+ *     Suppose we know the maximum subarray in A “with j-1 as right boundary” is S' (let it be A[k:j-1]),
+ *     can we derive S through S' and A[j]?
+ *  Yes, there are two cases as follows:
+ *       1. If sum(S') + A[j] > A[j], then adding A[j] to S' gives us S (at this point S = A[k:j]);
+ *  2. Otherwise, A[j] alone constitutes S (at this point S = A[j:j]);
+ *  In summary, S = max(S'+A[j], A[j]).
+ *  3. Since we can solve j through j-1, and the initial value is also easy to obtain (A[0:0]'s maximum subarray is itself),
+ *     we can then use dynamic programming to solve for S in a “rolling” manner;
+ *  4. However there's still one remaining problem: we previously assumed A's maximum subarray is S = A[i:j],
+ *     but we don't know exactly what the right boundary j is.
+ *  However, since we can derive the solution for j from j-1, we can derive from the initial value (A[0])
+ *  the maximum subarrays with 0~n as right boundaries respectively.
+ *  Then j must be among 0~n. We just pick the one with the maximum sum.
+ *
+ * The key here is transforming the concept of “maximum subarray” into “maximum subarray with j as right boundary”
+ * (the former is a subset of the latter; after calculating the full set, we can obtain the final solution through comparison).
  */
 
 import { MaxSubInfo } from '../divide-and-conquer/maximum-subarray'
 
 /**
- * 求 arr 的最大子数组，返回对应的子数组以及和
+ * Find the maximum subarray of arr, return the corresponding subarray sum and indices
  */
 function maxSubarray(arr: number[]): MaxSubInfo {
     if (!arr.length) {
@@ -38,28 +44,28 @@ function maxSubarray(arr: number[]): MaxSubInfo {
         return { start: 0, end: 0, sum: arr[0] }
     }
 
-    // dp[i] 表示 arr 中以 i 作为右边界的最大子数组信息
+    // dp[i] represents the maximum subarray information in arr with i as right boundary
     const dp: MaxSubInfo[] = []
-    // 记录 dp 中最大的那个子数组在 dp 中的位置（dp 求解完成后，该位置的值就是最终解）
+    // Record the position of the maximum subarray in dp (after dp is fully solved, this position's value is the final solution)
     let maxIndex = 0
 
-    // 初始化第一个元素
+    // Initialize first element
     dp[0] = { start: 0, end: 0, sum: arr[0] }
 
     let prev: MaxSubInfo
     for (let i = 1; i < arr.length; i++) {
         prev = dp[i - 1]
 
-        // 由于子数组必须以 i 作为右边界，所以可选行为是是否需要 prev 部分
+        // Since subarray must have i as right boundary, the choice is whether to include the prev part
         if (prev.sum + arr[i] > arr[i]) {
-            // prev 的值能使结果变大，则用之
-            dp[i] = { start:  prev.start, end: i, sum: prev.sum + arr[i]}
+            // prev's value can make the result larger, so use it
+            dp[i] = { start: prev.start, end: i, sum: prev.sum + arr[i] }
         } else {
-            // 否则，只用 arr[i]
+            // Otherwise, only use arr[i]
             dp[i] = { start: i, end: i, sum: arr[i] }
         }
 
-        // 看 dp[i] 是否是目前为止最大的子数组
+        // Check if dp[i] is the maximum subarray so far
         if (dp[i].sum > dp[maxIndex].sum) {
             maxIndex = i
         }

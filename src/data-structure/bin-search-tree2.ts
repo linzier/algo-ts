@@ -1,17 +1,17 @@
 /**
- * 二叉搜索树（递归法实现）
- * 二叉搜索树是一个二叉树，具备如下特点：
- *  1. 每个节点有两个指针：left(指向左孩子)、right(指向右孩子)；
- *  2. 每个节点有额外两个属性：key - 关键字；val - 卫星数据；
- *  3. 对于任意节点 x，有：
+ * Binary Search Tree (Recursive Implementation)
+ * A binary search tree is a binary tree with the following properties:
+ *  1. Each node has two pointers: left (pointing to left child), right (pointing to right child);
+ *  2. Each node has two additional attributes: key - the key; val - satellite data;
+ *  3. For any node x:
  *     x.key >= x.left.key;
  *     x.key <= x.right.key;
- *  4. 对第 3 点引申：
- *     4.1 对于任何节点 x，x.key 大于等于 x.left 所构成的子树上的任何节点的 key; 
- *     4.2 对于任何节点 x，x.key 小于等于 x.right 所构成的子树上的任何节点的 key;
- *     4.3 任何两个相连接的节点（如下图中 15 和 6、6 和 7），无论其父子关系如何，左边的永远小于等于右边的；
+ *  4. Extending point 3:
+ *     4.1 For any node x, x.key is greater than or equal to the key of any node in the subtree rooted at x.left;
+ *     4.2 For any node x, x.key is less than or equal to the key of any node in the subtree rooted at x.right;
+ *     4.3 Any two connected nodes (e.g., 15 and 6, 6 and 7 in the figure below), regardless of their parent-child relationship, the left one is always less than or equal to the right one;
  * 
- * 例：
+ * Example:
  *                           15
  *                       /        \ 
  *                     6            18
@@ -21,9 +21,9 @@
  *              2    4       13
  *                          /
  *                         9
- * 下面的操作皆以此二叉树为例说明。
+ * The operations below are all illustrated using this binary tree.
  * 
- * @see {@link https://www.cnblogs.com/linvanda/p/17283480.html} 本文详细介绍了二叉搜索树的实现原理。
+ * @see {@link https://www.cnblogs.com/linvanda/p/17283480.html} This article provides a detailed introduction to the implementation principles of binary search trees.
  */
 
 interface Value {
@@ -32,7 +32,7 @@ interface Value {
 }
 
 /**
- * 定义树的节点
+ * Define tree node
  */
 interface Node extends Value {
     left: Node | null;
@@ -40,12 +40,12 @@ interface Node extends Value {
 }
 
 /**
- * 二叉搜索树
- * 为方便起见，这里限制 key 是 number 类型，另外对于查找和删除仅操作第一个匹配的节点
+ * Binary Search Tree
+ * For convenience, key is restricted to number type, and search/delete only operate on the first matching node
  */
 class BinSearchTree {
     protected root: Node | null
-    // 树节点数量
+    // Number of tree nodes
     protected _size: number
 
     public constructor() {
@@ -58,23 +58,23 @@ class BinSearchTree {
     }
 
     /**
-     * 树高度
-     * 用求最大深度的方式求高度
+     * Tree height
+     * Calculate height by finding maximum depth
      */
     public height(): number {
         return this.innerDepth(this.root, 0)
     }
 
     /**
-     * 计算 root 子树的最大深度
-     * currDepth 表示 root 所处的深度
+     * Calculate the maximum depth of the subtree rooted at root
+     * currDepth represents the depth at which root is located
      */
     protected innerDepth(root: Node | null, currDepth: number): number {
         if (!root || !root.left && !root.right) {
             return currDepth
         }
 
-        // 分别计算左右子树的高度，取最大的
+        // Calculate the height of left and right subtrees respectively, take the maximum
         const leftDepth = this.innerDepth(root.left, currDepth + 1)
         const rightDepth = this.innerDepth(root.right, currDepth + 1)
 
@@ -82,45 +82,45 @@ class BinSearchTree {
     }
 
     /**
-     * 将元素 data 插入到树中
+     * Insert element data into the tree
      */
     public insert(key: number, val: unknown) {
-        // 从根节点开始处理（即将 val 插入到整个二叉树中）
-        // 插入完成后，将新子树（这里是整棵二叉树）的根赋值给 root
+        // Start from root (i.e., insert val into the entire binary tree)
+        // After insertion, assign the root of the new subtree (here the entire tree) to root
         this.root = this.innerInsert({ key, val }, this.root)
         this._size++
     }
     
     /**
-     * 将元素 data 插入到以 node 为根的子树中
-     * 返回插入元素后的子树的根节点
+     * Insert element data into the subtree rooted at node
+     * Return the root of the subtree after insertion
      */
     private innerInsert(data: Value, node: Node): Node {
         if (node === null) {
-            // 遇到了 null 节点，说明需要插入到该位置
+            // Encountered a null node, meaning we need to insert at this position
             return { ...data, left: null, right: null }
         }
         
-        // 比较 data 和 node 的值，视情况做处理
+        // Compare data and node values, handle accordingly
         if (data.key < node.key) {
-            // 待插入的元素小于当前节点，需要插入到当前节点的左子树中
+            // Element to insert is less than current node, insert into left subtree
             node.left = this.innerInsert(data, node.left)
         } else {
-            // 插入到右子树中
+            // Insert into right subtree
             node.right = this.innerInsert(data, node.right)
         }
         
-        // 插入完成后，需返回当前节点
+        // After insertion, return the current node
         return node
     }
 
     /**
-     * 删除 key 对应的节点
+     * Delete the node corresponding to key
      */
     delete(key: number) {
         const node = this.searchNode(key)
         if (!node) {
-            // key 不存在
+            // key does not exist
             return
         }
         
@@ -129,49 +129,49 @@ class BinSearchTree {
     }
     
      /**
-     * 删除子树 current 中 del 节点，并返回操作完成后的子树根节点
+     * Delete node del from subtree current, return the root of the subtree after the operation
      */
     innerDelete(current: Node, del: Node): Node {
         /**
-         * 当前节点即为待删除节点
+         * Current node is the node to be deleted
          */
         if (current === del) {
-            // 情况一：当前节点没有任何子节点，直接删除
+            // Case 1: Current node has no children, delete directly
             if (!current.left && !current.right) {
                 return null
             }
             
-            // 情况二：只有一个子节点
+            // Case 2: Has only one child
             if (current.left && !current.right) {
-                // 只有左子节点，用左子节点替换当前节点
+                // Only left child, replace current node with left child
                 return current.left
             }
             
             if (current.right && !current.left) {
-                // 只有右子节点，用右子节点替换当前节点
+                // Only right child, replace current node with right child
                 return current.right
             }
             
-            // 情况三：有两个子节点
-            // 取右子树的最小节点
+            // Case 3: Has two children
+            // Get the minimum node from the right subtree
             const minNode = this.minimum(current.right)
-            // 用最小节点的值替换当前节点的
+            // Replace current node's value with the minimum node's value
             current.key = minNode?.key
             current.val = minNode?.val
-            // 删除右子树中的最小节点
+            // Delete the minimum node from the right subtree
             current.right = this.innerDelete(current.right, minNode)
 
             return current
         }
         
         /**
-         * 当前节点不是待删除节点，视情况递归从左或右子树中删除
+         * Current node is not the node to delete, recursively delete from left or right subtree as appropriate
          */
         if (del.key < current.key) {
-            // 待删除节点小于当前节点，从左子树删除
+            // Node to delete is less than current node, delete from left subtree
             current.left = this.innerDelete(current.left, del)
         } else {
-            // 待删除节点大于当前节点，继续从右子树删除
+            // Node to delete is greater than current node, continue deleting from right subtree
             current.right = this.innerDelete(current.right, del)
         }
         
@@ -179,7 +179,7 @@ class BinSearchTree {
     }
 
     /**
-     * 根据关键字 key 查找第一个匹配的元素，返回对应的 val。如果没找到则返回 undefined 
+     * Search for the first matching element by key, return its val. Returns undefined if not found 
      */
     public search(key: number): unknown {
         const node = this.searchNode(key)
@@ -188,39 +188,39 @@ class BinSearchTree {
     }
 
     /**
-     * 在以 node 为根的子树中搜索关键字为 key 的节点并返回该节点
-     * 如果没有找到则返回 null
+     * Search for the node with the given key in the subtree rooted at node and return it
+     * Returns null if not found
      */
     public searchNode(key: number, node: Node = undefined): Node | null {
-        // 默认取根
+        // Default to root
         node = node === undefined ? this.root : node
         
-        // 遇到 null 节点，说明没搜到，返回 null
+        // Encountered null node, not found, return null
         if (!node) {
             return null
         }
         
-        // 先判断当前节点
+        // Check current node first
         if (node.key === key) {
-            // 找到，即可返回
+            // Found, return it
             return node
         }
         
-        // 没有找到，则视情况继续搜索左右子树
+        // Not found, continue searching in left or right subtree as appropriate
         if (key < node.key) {
-            // 目标值小于当前节点，到左子树中搜索
+            // Target is less than current node, search in left subtree
             return this.searchNode(key, node.left)
         }
         
-        // 目标值大于等于当前节点，到右子树中搜索
+        // Target is greater than or equal to current node, search in right subtree
         return this.searchNode(key, node.right)
     }
 
     /**
-     * 中序遍历
-     * 先打印左子树，再打印自己，最后打印右子树（所谓“中”即是在中间打印自己）
-     * 中序遍历可以实现排序
-     * 示例树的中序遍历：2, 3, 4, 6, 7, 9, 13, 15, 17, 18, 20
+     * In-order traversal
+     * Print left subtree first, then self, then right subtree (so-called “in” means self is printed in the middle)
+     * In-order traversal can implement sorting
+     * In-order traversal of example tree: 2, 3, 4, 6, 7, 9, 13, 15, 17, 18, 20
      */
     public inorderWalk(): Node[] {
         const arr: Node[] = []
@@ -234,19 +234,19 @@ class BinSearchTree {
             return
         }
 
-        // 先输出左子树
+        // Output left subtree first
         this.inorder(x.left, arr)
-        // 自身
+        // Self
         arr.push(x)
-        // 右子树
+        // Right subtree
         this.inorder(x.right, arr)
     }
 
     /**
-     * 先序遍历
-     * 先打印自身，再打印左节点，最后打印右子树
-     * 先序遍历反映了一种构成此树结构的插入顺序
-     * 示例树的先序遍历：15, 6, 3, 2, 4, 7, 13, 9, 18, 17, 20
+     * Pre-order traversal
+     * Print self first, then left node, then right subtree
+     * Pre-order traversal reflects an insertion order that constructs this tree structure
+     * Pre-order traversal of example tree: 15, 6, 3, 2, 4, 7, 13, 9, 18, 17, 20
      */
     public preorderWalk(): Node[] {
         const arr: Node[] = []
@@ -260,18 +260,18 @@ class BinSearchTree {
             return
         }
 
-        // 自身
+        // Self
         arr.push(x)
-        // 左子树
+        // Left subtree
         this.preorder(x.left, arr)
-        // 右子树
+        // Right subtree
         this.preorder(x.right, arr)
     }
 
     /**
-     * 后序遍历
-     * 先打印左子树，再打印右子树，最后打印自身
-     * 示例树的后序遍历：2, 4, 3, 9, 13, 7, 6, 17, 20, 18, 15
+     * Post-order traversal
+     * Print left subtree first, then right subtree, then self
+     * Post-order traversal of example tree: 2, 4, 3, 9, 13, 7, 6, 17, 20, 18, 15
      */
     public postorderWalk(): Node[] {
         const arr: Node[] = []
@@ -285,52 +285,52 @@ class BinSearchTree {
             return
         }
 
-        // 左子树
+        // Left subtree
         this.postorder(x.left, arr)
-        // 右子树
+        // Right subtree
         this.postorder(x.right, arr)
-        // 自身
+        // Self
         arr.push(x)
     }
 
     /**
-     * 获取以 node 为根的子树中最小元素
-     * 不断获取左孩子节点，直到某个元素没有左孩子节点为止
-     * 示例树的最小值是 2
+     * Get the minimum element in the subtree rooted at node
+     * Keep getting the left child until a node has no left child
+     * The minimum of the example tree is 2
      */
     public minimum(node?: Node): Node | null {
-        // 默认取根节点
+        // Default to root node
         node = node === undefined ? this.root : node
         
         if (node === null || !node.left) {
-            // 如果是空子树，或者 node.left 是空节点，则返回
+            // Return if empty subtree or node.left is null
             return node
         }
         
-        // 存在左子树，继续往左子树中找
+        // Left subtree exists, continue searching in left subtree
         return this.minimum(node.left)
     }
 
     /**
-     * 获取以 node 为根的子树中最大元素
-     * 不断获取右孩子节点，直到某个元素没有右孩子节点为止
-     * 示例树的最大值是 20
+     * Get the maximum element in the subtree rooted at node
+     * Keep getting the right child until a node has no right child
+     * The maximum of the example tree is 20
      */
     public maximum(node?: Node): Node | null {
-        // 默认取根节点
+        // Default to root node
         node = node === undefined ? this.root : node
         
         if (node === null || !node.right) {
-            // 如果是空子树，或者 node.right 是空节点，则返回
+            // Return if empty subtree or node.right is null
             return node
         }
         
-        // 存在左子树，继续往左子树中找
+        // Left subtree exists, continue searching in right subtree
         return this.maximum(node.right)
     }
 
     /**
-     * 按序返回所有大于等于 start 且小于等于 end 的节点集合
+     * Return all nodes with keys between start and end in order
      */
     public range(start: number, end: number): Node[] {
         const arr: Node[] = []
@@ -339,28 +339,28 @@ class BinSearchTree {
     }
     
     /**
-     * 在 x 子树中查找所有大于等于 start 且小于等于 end 的节点并放入 arr 中
+     * Find all nodes in subtree x with keys between start and end and put them into arr
      */
     private innerRange(x: Node, start: number, end: number, arr: Node[]) {
         if (!x) {
             return
         }
         
-        // 比较节点 x 和 start、end 之间的大小关系
+        // Compare node x with start and end
         const greaterThanStart = x.key >= start
         const smallerThanEnd = x.key <= end
 
-        // 如果当前节点大于等于 start，则需要搜索其左子树
+        // If current node >= start, need to search its left subtree
         if (greaterThanStart) {
             this.innerRange(x.left, start, end, arr)
         }
         
-        // 如果 x 在 start 和 end 之间，则符合条件，存入 arr
+        // If x is between start and end, it qualifies, add to arr
         if (greaterThanStart && smallerThanEnd) {
             arr.push(x)
         }
         
-        // 如果当前节点小于等于 end，则需要搜索其右子树
+        // If current node <= end, need to search its right subtree
         if (smallerThanEnd) {
             this.innerRange(x.right, start, end, arr)   
         }

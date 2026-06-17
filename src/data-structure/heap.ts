@@ -1,7 +1,7 @@
 /**
- * 堆（这里指二叉堆）
- * 堆是一棵完全二叉树（除最后一层外，树是满的；最后一层元素从左到右依次排列）。
- * 如图：
+ * Heap (Binary Heap)
+ * A heap is a complete binary tree (all levels are full except possibly the last, which is filled from left to right).
+ * as shown: 
  *                               16
  *                            /      \
  *                          14        10
@@ -10,55 +10,55 @@
  *                      /  \    /
  *                     2    4  1
  * 
- * 完全二叉树可以用数组表示，父子元素下标之间存在如下关系：
- * （为了方便运算，不使用数组第一个元素，元素下标从 1 开始）
- * 基于父元素下标 p 推算子元素：
- *      左子元素下标：l = 2p;
- *      右子元素下标：r = 2p + 1;
- * 基于子元素下标 c（无论左子元素或者右子元素） 推算父元素下标 p：
+ * A complete binary tree can be represented by an array. The parent-child index relationships are:
+ * (For easier computation, the first array element is unused, indices start from 1)
+ * Computing children from parent index p:
+ *      Left child index: l = 2p;
+ *      Right child index: r = 2p + 1;
+ * Computing parent index p from child index c (whether left or right child):
  *      p = floor(c/2);
  * 
- * 注：代码中通过左右位移来实现与 2 乘除运算（右移即除 2，左移即乘 2）。
+ * Note: The code uses bit shifting for multiplication/division by 2 (right shift = divide by 2, left shift = multiply by 2).
  * 
- * 大顶堆：对于堆中的任意子树，树中父节点值大于等于子节点值（树根是最大的元素）；
- * 小顶堆：对于堆中的任意子树，树中父节点值小于等于子节点值（树根是最小的元素）；
+ * Max-heap: For any subtree in the heap, parent values are >= child values (root is the maximum element);
+ * Min-heap: For any subtree in the heap, parent values are <= child values (root is the minimum element);
  * 
- * 为方便描述，下面注释中用:
- *  TREE(i) 表示由节点 i 作为根节点构成的子树;
- *  LEFT(i) 表示 i 的左子节点;
- *  RIGHT(i) 表示 i 的右子节点;
- *  PARENT(i) 表示 i 的父节点;
+ * For convenience in the comments below:
+ *  TREE(i) denotes the subtree rooted at node i;
+ *  LEFT(i) denotes i's left child;
+ *  RIGHT(i) denotes i's right child;
+ *  PARENT(i) denotes i's parent;
  */
 
 interface Value {
-    // 关键字，此处支持 string 和 number 两种类型
+    // Key, supports both string and number types
     key: string | number,
-    // 值（卫星数据），任意类型
+    // Value (satellite data), any type
     val: unknown;
 }
 
 class Heap {
     protected data: Value[]
-    // 堆中元素数量
+    // Number of elements in heap
     protected _size: number
-    // 是否大顶堆
+    // Whether it is a max-heap
     protected isMax: boolean
 
     /**
-     * 基于 data 数组构建堆
-     * 注意：该操作会修改外面的 data 数组，如果不想这样，外面需要传入数组的复制
+     * Build heap from data array
+     * Note: This operation modifies the external data array; pass a copy if you don't want this
      * 
-     * @param data - 用于构建堆的数组
-     * @param isMax - 是否大顶堆
+     * @param data - Array used to build the heap
+     * @param isMax - Whether it is a max-heap
      */
     public constructor(data: Value[], isMax: boolean) {
         this.isMax = isMax
         this._size = data.length
         this.data = data
-        // 第一个位置不用
+        // First position is unused
         this.data.unshift({ key: '', val: null })
 
-        // 构建堆
+        // Build heap
         this.build()
     }
 
@@ -71,28 +71,28 @@ class Heap {
     }
 
     /**
-     * 弹出堆顶元素
-     * 弹出后，从堆尾拿一个元素放到堆顶，然后对堆顶执行 heapify
+     * Pop the heap top element
+     * After popping, move an element from the heap tail to the top, then heapify the top
      */
     public pop(): Value {
         if (this._size == 0) {
             throw new Error('heap is empty')
         }
 
-        // 取出第一个元素（堆顶）
+        // Get the first element (heap top)
         const ele = this.data[1]
-        // 将最后一个元素放到堆顶
+        // Move the last element to the heap top
         const last = this.data.pop()
         this._size -= 1
 
         if (this._size > 0) {
             this.data[1] = last
             /**
-             * 将最后一个元素放到堆顶后，新堆顶可能不再满足堆的性质，需要执行堆化
-             * 之所以从堆尾拿一个元素填到堆顶：假设我们从其它地方（如原堆顶的左/右子节点）拿元素填到堆顶，那么就会破坏下方
-             * 子树的结构，从而造成连锁反应（需要不断向下拿）。
-             * 从堆尾拿元素，因为堆尾节点下面没有子节点（也没有右邻居节点），因而不会产生这种级联影响，能保证整个堆除了根以外
-             * 的其他任何子树仍然满足堆的性质，从而我们对堆顶执行 heapify 即可。
+             * After moving the last element to the top, the new top may no longer satisfy the heap property, requiring heapification.
+             * The reason for taking from the heap tail: if we took from elsewhere (e.g., the original top's left/right child), it would disrupt the structure
+             * of subtrees below, causing a chain reaction (needing to keep moving elements down).
+             * Taking from the tail, since the tail node has no children (and no right sibling), produces no cascading effects, ensuring all subtrees
+             * except the root still satisfy the heap property, so we only need to heapify the top.
              */
             this.heapify(1)
         }
@@ -101,62 +101,62 @@ class Heap {
     }
 
     /**
-     * 往堆中添加元素
-     * 先将元素加到堆尾，然后类似插入排序思想，顺着该元素的父节点递归向上找到适合它的位置插入即可。
-     * （对于大顶堆，就是向上找到位置 i，data[i] < ele 且 PARENT(i) >= ele）
-     * （一个节点，顺着其父节点递归向上是已经排好序的） 
-     * @returns 返回元素 ele 被插入到的节点位置
+     * Add element to the heap
+     * First add the element to the heap tail, then bubble up to find the appropriate position (similar to insertion sort).
+     * (For max-heap: bubble up to find position i where data[i] < ele and PARENT(i) >= ele)
+     * (Following parent pointers upward from any node gives a sorted sequence)
+     * @returns The position where element ele was inserted
      */
     public push(ele: Value): number {
-        // 将元素加到末尾
+        // Add element to the end
         this.data.push(ele)
         this._size += 1
 
-        // 让末尾元素向上“冒泡”到合适的位置
+        // Let the last element “bubble” upward to the appropriate position
         return this.bubble(this._size)
     }
 
     /**
-     * 从 i 位置开始顺着父节点链“冒泡”，找到 data[i] 应插入的合适的位置
-     * 思想同插入排序
-     * @returns 返回原 i 位置的元素 bubble 后所在的新位置 j
+     * Starting from position i, “bubble” up along the parent chain to find the appropriate position for data[i]
+     * Idea is the same as Insertion Sort
+     * @returns The new position j where the original element at position i ends up after bubbling
      */
     protected bubble(i: number): number {
         if (i == 1) {
             return 1
         }
 
-        // 将 i 位置的元素暂存起来，避免每次都要执行三次赋值来交换数据
+        // Temporarily store the element at position i to avoid three assignments per swap
         const curr = this.data[i]
 
         do {
-            // 父节点位置
+            // Parent position
             const parent = i >> 1
 
             if (this.isMax && this.data[parent].key >= curr.key || !this.isMax && this.data[parent].key <= curr.key) {
-                // 符合条件了，将 curr 赋值到该位置，结束
+                // Condition met, assign curr to this position, done
                 this.data[i] = curr
                 return i
             }
 
-            // i 位置的元素不符合堆的条件，将 parent 的元素往下挪到 i 的位置，继续向上找
+            // Element at position i violates heap property, move parent element down to position i, continue upward
             this.data[i] = this.data[parent]
             i = parent
         } while (i > 1)
 
-        // 如果走到这里（根），说明整个父节点链上元素都大于/小于（取决于是大顶堆还是小顶堆） i 元素，则将 i 元素设置为根
+        // If we reach here (root), all elements in the parent chain are greater/less than (depending on max/min heap) element i, so set element i as root
         this.data[1] = curr
         return 1
     }
 
     /**
-     * 建堆
-     * 建堆就是自底向上、自右向左依次对每棵子树执行堆化
-     * 第一个执行堆化的子树是 TREE[size/2]（倒数第二层自右向左数第一个非叶子节点构成的子树）
-     * 最后一个执行堆化的子树是 TREE[0]（也就是整个树的根）
+     * Build heap
+     * Building a heap means heapifying each subtree bottom-up, right-to-left
+     * The first subtree to heapify is TREE[size/2] (the first non-leaf node from right to left on the second-to-last level)
+     * The last subtree to heapify is TREE[0] (the root of the entire tree)
      * 
-     * 之所以要自底向上依次堆化，参见堆化函数的说明即可知，对子树 TREE(i) heapify 之前，其左右子节点 LEFT(i) 和 RIGHT(i) 所
-     * 构成的子树必须已经完成堆化。
+     * The reason for bottom-up heapification: as explained in the heapify function, before heapifying TREE(i),
+     * the subtrees formed by LEFT(i) and RIGHT(i) must already be heapified.
      */
     protected build() {
         for (let i = this._size >> 1; i > 0; i--) {
@@ -165,49 +165,49 @@ class Heap {
     }
 
     /**
-     * 对子树 TREE(i) 执行堆化
-     * 前提：在对子树 TREE(i) 执行堆化前，i 的两个子节点 LEFT(i) 和 RIGHT(i) 所构成的子树已经完成了堆化，也就是说
-     * 执行堆化前仅仅是树根元素不满足堆条件。
+     * Heapify subtree TREE(i)
+     * Prerequisite: Before heapifying TREE(i), the subtrees formed by i's two children LEFT(i) and RIGHT(i) must already be heapified,
+     * meaning only the root element violates the heap condition before heapification.
      * 
-     * 步骤(以大顶堆为例)：
-     *  1. 在当前节点（父节点）、左子节点、右子节点三者之间找出值最大的那个，设下标为 j；
-     *  2. 如果 j 不等于 i，说明当前父节点不符合大顶堆条件，将 j 和 i 的值互换，如此父节点变成了三者中最大的，满足条件了；
-     *  3. 然而 j 和 i 交换后，j 位置的新值（从 i 位置交换来的）针对 TREE[j] 可能不再满足大顶堆的条件，所以需要继续 heapify(j)。
+     * Steps (for max-heap):
+     *  1. Find the largest value among current node (parent), left child, and right child, let its index be j;
+     *  2. If j != i, the parent violates max-heap property, swap j and i values. Now the parent is the largest of the three, satisfying the condition;
+     *  3. However, after swapping j and i, the new value at position j (swapped from position i) may violate the max-heap property for TREE[j], so continue heapify(j).
      * 
-     * @param i - 子树根节点所在位置
-     * @returns 操作后原 i 元素所在的新位置 j
+     * @param i - Position of the subtree root
+     * @returns The new position j where the original element at i ends up
      */
     protected heapify(i: number): number {
-        // 终止条件：i 是叶子节点
+        // Termination condition: i is a leaf node
         if (i > this._size >> 1) {
             return i
         }
 
-        // 取 data[i]、LEFT(i)、RIGHT(i) 三者最大/小值
+        // Get the max/min of data[i], LEFT(i), RIGHT(i)
         const left = i << 1
         const right = (i << 1) + 1
-        // 获取三者中最大/最小值的位置
+        // Get the position of the max/min among the three
         const peak = this.getPeak(i, left, right)
 
-        // 如果 i就是最大/最小值，则堆化结束
+        // If i is the max/min, heapification is done
         if (peak === i) {
             return i
         }
 
-        // 需要交换
+        // Need to swap
         const tmp = this.data[peak]
         this.data[peak] = this.data[i]
         this.data[i] = tmp
 
-        // 交换后需要对 peak 构成的子树继续堆化
+        // After swapping, continue heapifying the subtree rooted at peak
         return this.heapify(peak)
     }
 
     /**
-     * 获取并返回最大/最小值的下标
-     * @param p 父节点下标
-     * @param l 左子节点下标
-     * @param r 右子节点下标
+     * Get and return the index of the max/min value
+     * @param p Parent index
+     * @param l Left child index
+     * @param r Right child index
      */
     private getPeak(p: number, l: number, r: number): number {
         if (l > this._size) {
@@ -218,12 +218,12 @@ class Heap {
         const isMax = this.isMax
 
         let peak = p
-        // 先取父节点与左子节点之间最大/最小的那个
+        // First get the max/min between parent and left child
         if (isMax && data[peak].key < data[l].key || !isMax && data[peak].key > data[l].key) {
             peak = l
         }
 
-        // 继上面选出最大/最小节点后，再跟右子节点比较，选出最大/最小的那个，如此便选出了三者中最大/最小的那个
+        // After selecting the max/min node above, compare with right child to select the overall max/min, thus selecting the max/min of all three
         if (r <= this._size && (isMax && data[peak].key < data[r].key || !isMax && data[peak].key > data[r].key)) {
             peak = r
         }

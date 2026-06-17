@@ -1,7 +1,7 @@
 import assert from "assert"
 
 /**
- * 生成待排序的数据
+ * Generate data for sorting
  */
 export function numberData(maxVal = Infinity) {
     const data = [
@@ -13,7 +13,7 @@ export function numberData(maxVal = Infinity) {
         [4, 2, 6, 3, 3, 8, 1],
     ]
 
-    // 生成 10000 个随机整数
+    // Generate 10000 random integers
     const arr: number[] = []
     for (let i = 0; i < 10000; i++) {
         arr.push(Math.floor(Math.random() * 100000))
@@ -21,7 +21,7 @@ export function numberData(maxVal = Infinity) {
 
     data.push(arr)
 
-    // 排除掉大于 maxVal 的
+    // Filter out values greater than maxVal
     for (const i in data) {
         data[i] = data[i].filter((val: number) => val <= maxVal)
     }
@@ -35,12 +35,12 @@ export function sort(sortFunc: (arr: number[]) => void) {
     for (let i = 0; i < arrs.length; i++) {
         const arr = arrs[i]
         const flag = `${sortFunc.name}-${i}-cnt(${arr.length})`
-        // 计时
+        // Timing
         console.time(flag)
         sortFunc(arr)
         console.timeEnd(flag)
 
-        // 排序后，j 大于等于 j - 1
+        // After sort, arr[j] >= arr[j-1]
         for (let j = 1; j < arr.length; j++) {
             assert.ok(arr[j] >= arr[j - 1])
         }

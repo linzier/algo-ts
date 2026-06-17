@@ -1,7 +1,7 @@
 /**
- * 栈
- * 后进先出
- * 可以使用数组实现栈，不过这里使用链表实现
+ * Stack
+ * Last In First Out
+ * Can be implemented with an array, but here uses a linked list
  */
 
 import { Link } from './link'
@@ -18,14 +18,14 @@ class Stack {
     }
 
     /**
-     * 压栈
+     * Push
      */
     public push(data: unknown) {
         this.link.insert(data)
     }
 
     /**
-     * 出栈
+     * Pop
      */
     public pop(): unknown {
         if (this.isEmpty()) {

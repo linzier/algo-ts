@@ -3,7 +3,7 @@ import { knapsack, Goods } from '../../src/dp/complete-knapsack'
 
 describe('complete knapsack', () => {
     it('should ok', () => {
-        // 物品数组, 背包容量, 结果
+        // item array, knapsack capacity, result
         const list: [Goods[], number, number][] = [
             [[], 100, 0],
             [[{ v: 77, w: 92 }, { v: 22, w: 22 }, { v: 29, w: 87 }], 0, 0],
